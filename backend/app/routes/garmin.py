@@ -54,9 +54,9 @@ def login(body: GarminLoginRequest) -> GarminLoginResponse:
         ) from exc
 
     if isinstance(result, tuple):
-        # MFA required: library returns (status_string, client_state)
-        _mfa_status, client_state = result
-        sid = sess.create({"client_state": client_state, "email": body.email})
+        # MFA required: store the live client object so resume_login can use
+        # its in-memory MFA state (_mfa_flow, _mfa_session, etc.).
+        sid = sess.create({"client": client})
         return GarminLoginResponse(status="mfa_required", sessionId=sid)
 
     token = client.client.dumps()
@@ -74,8 +74,8 @@ def mfa(body: GarminMfaRequest) -> GarminMfaResponse:
     sess.delete(body.sessionId)
 
     try:
-        client = Garmin(stored["email"], "")
-        client.resume_login(stored["client_state"], body.code)
+        client = stored["client"]
+        client.resume_login(None, body.code)
     except Exception as exc:
         log.warning("Garmin MFA failed: %s", type(exc).__name__)
         raise HTTPException(
