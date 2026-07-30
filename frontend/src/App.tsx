@@ -17,7 +17,12 @@ const STEP_LABELS = [
 ]
 
 function initState() {
-  return { ...initialState, ...loadSaved() }
+  const saved = loadSaved()
+  return {
+    ...initialState,
+    ...saved,
+    garminToken: saved.garminToken || null,
+  }
 }
 
 export default function App() {
@@ -26,8 +31,16 @@ export default function App() {
   const dispatch = useCallback(
     (action: WizardAction) => {
       if (action.type === 'HEVY_KEY_CHANGED') saveCred('hevyApiKey', action.key)
-      if (action.type === 'GARMIN_EMAIL_CHANGED') saveCred('garminEmail', action.email)
-      if (action.type === 'GARMIN_PASSWORD_CHANGED') saveCred('garminPassword', action.password)
+      if (action.type === 'GARMIN_EMAIL_CHANGED') {
+        saveCred('garminEmail', action.email)
+        if (action.email) saveCred('garminToken', '') // credential change invalidates saved token
+      }
+      if (action.type === 'GARMIN_PASSWORD_CHANGED') {
+        saveCred('garminPassword', action.password)
+        if (action.password) saveCred('garminToken', '') // credential change invalidates saved token
+      }
+      if (action.type === 'GARMIN_AUTHENTICATED') saveCred('garminToken', action.token)
+      if (action.type === 'GARMIN_SESSION_EXPIRED') saveCred('garminToken', '')
       rawDispatch(action)
     },
     [rawDispatch],

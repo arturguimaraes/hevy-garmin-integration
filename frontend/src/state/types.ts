@@ -90,6 +90,7 @@ export type WizardAction =
   | { type: 'GARMIN_MFA_PENDING'; sessionId: string }
   | { type: 'GARMIN_MFA_CANCELLED' }
   | { type: 'GARMIN_AUTHENTICATED'; token: string }
+  | { type: 'GARMIN_SESSION_EXPIRED' }
   | { type: 'WORKOUT_PREFIX_CHANGED'; prefix: string }
   | { type: 'PUSH_RESULT_ADDED'; result: PushResult }
   | { type: 'NEXT_STEP' }

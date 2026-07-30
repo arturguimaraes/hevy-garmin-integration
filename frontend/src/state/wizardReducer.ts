@@ -65,6 +65,9 @@ export function wizardReducer(state: WizardState, action: WizardAction): WizardS
     case 'GARMIN_MFA_CANCELLED':
       return { ...state, garminSessionId: null }
 
+    case 'GARMIN_SESSION_EXPIRED':
+      return { ...state, garminToken: null, garminSessionId: null }
+
     case 'GARMIN_AUTHENTICATED':
       return {
         ...state,
