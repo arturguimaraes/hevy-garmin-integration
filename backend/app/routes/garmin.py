@@ -218,7 +218,12 @@ def push(body: PushRequest) -> PushResponse:
                 ],
             )
             res = client.upload_strength_workout(sw)
-            results.append(PushResult(title=workout.title, workoutId=str(res["workoutId"])))
+            wid = str(res["workoutId"])
+            scheduled_date: str | None = None
+            if workout.date:
+                client.schedule_workout(wid, workout.date)
+                scheduled_date = workout.date
+            results.append(PushResult(title=workout.title, workoutId=wid, scheduledDate=scheduled_date))
         except Exception as exc:
             log.warning("Failed to push %r: %s", workout.title, exc)
             results.append(PushResult(title=workout.title, error=str(exc)))

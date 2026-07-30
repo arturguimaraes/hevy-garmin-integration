@@ -74,6 +74,7 @@ export interface WorkoutExercisePayloadType {
 
 export interface WorkoutPayloadType {
   title: string
+  date: string | null
   exercises: WorkoutExercisePayloadType[]
 }
 

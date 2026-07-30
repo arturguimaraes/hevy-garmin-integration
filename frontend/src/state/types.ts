@@ -45,6 +45,7 @@ export interface ExerciseMappingType {
 export interface PushResultType {
   title: string;
   workoutId: string | null;
+  scheduledDate: string | null;
   error: string | null;
 }
 
@@ -84,6 +85,7 @@ export type WizardActionType =
   | { type: ActionTypeEnum.GarminAuthenticated; token: string }
   | { type: ActionTypeEnum.GarminSessionExpired }
   | { type: ActionTypeEnum.WorkoutPrefixChanged; prefix: string }
+  | { type: ActionTypeEnum.PushResultsCleared }
   | { type: ActionTypeEnum.PushResultAdded; result: PushResultType }
   | { type: ActionTypeEnum.NextStep }
   | { type: ActionTypeEnum.PrevStep }

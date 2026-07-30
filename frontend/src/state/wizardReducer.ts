@@ -29,7 +29,11 @@ export function wizardReducer(state: WizardStateType, action: WizardActionType):
       return { ...state, hevyUsername: action.username }
 
     case ActionTypeEnum.RoutinesLoaded:
-      return { ...state, routines: action.routines, selectedRoutineIds: [] }
+      return {
+        ...state,
+        routines: [...action.routines].sort((a, b) => a.title.localeCompare(b.title)),
+        selectedRoutineIds: [],
+      }
 
     case ActionTypeEnum.RoutineToggled: {
       const selected = state.selectedRoutineIds.includes(action.id)
@@ -67,6 +71,9 @@ export function wizardReducer(state: WizardStateType, action: WizardActionType):
 
     case ActionTypeEnum.WorkoutPrefixChanged:
       return { ...state, workoutNamePrefix: action.prefix }
+
+    case ActionTypeEnum.PushResultsCleared:
+      return { ...state, pushResults: [] }
 
     case ActionTypeEnum.PushResultAdded:
       return { ...state, pushResults: [...state.pushResults, action.result] }
