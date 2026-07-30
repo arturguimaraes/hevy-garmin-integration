@@ -39,7 +39,7 @@ _STRENGTH = {"sportTypeId": 5, "sportTypeKey": "strength_training"}
 def login(body: GarminLoginRequest) -> GarminLoginResponse:
     try:
         client = Garmin(body.email, body.password, return_on_mfa=True)
-        client.skip_strategies = {"mobile+cffi", "mobile+requests"}
+        client.client.skip_strategies = {"mobile+cffi", "mobile+requests"}
         result = client.login()
     except GarminConnectTooManyRequestsError as exc:
         log.warning("Garmin login rate-limited: %s", exc)
