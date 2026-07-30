@@ -60,6 +60,8 @@ export function Step5ReviewPush({ state, dispatch, onBack }: Props) {
   )
   const [pushing, setPushing] = useState(false)
   const [pushError, setPushError] = useState<string | null>(null)
+  const [sessionExpired, setSessionExpired] = useState(false)
+  const [relogging, setRelogging] = useState(false)
 
   const hasPushResults = state.pushResults.length > 0
   const allDone =
@@ -82,9 +84,29 @@ export function Step5ReviewPush({ state, dispatch, onBack }: Props) {
         dispatch({ type: ActionTypeEnum.PushResultAdded, result })
       }
     } catch (err) {
-      setPushError(err instanceof Error ? err.message : 'Push failed')
+      const msg = err instanceof Error ? err.message : 'Push failed'
+      if (msg.toLowerCase().includes('session') || msg.toLowerCase().includes('no longer valid')) {
+        setSessionExpired(true)
+        dispatch({ type: ActionTypeEnum.GarminSessionExpired })
+      } else {
+        setPushError(msg)
+      }
     } finally {
       setPushing(false)
+    }
+  }
+
+  async function handleReconnect() {
+    setRelogging(true)
+    setSessionExpired(false)
+    try {
+      const res = await garmin.browserLogin()
+      dispatch({ type: ActionTypeEnum.GarminAuthenticated, token: res.token })
+    } catch (err) {
+      setPushError(err instanceof Error ? err.message : 'Login failed')
+      setSessionExpired(true)
+    } finally {
+      setRelogging(false)
     }
   }
 
@@ -149,6 +171,19 @@ export function Step5ReviewPush({ state, dispatch, onBack }: Props) {
           )
         })}
       </div>
+
+      {sessionExpired && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 flex items-center justify-between gap-4">
+          <span>Garmin session expired.</span>
+          <button
+            onClick={handleReconnect}
+            disabled={relogging}
+            className="shrink-0 rounded-md bg-amber-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-800 disabled:opacity-60"
+          >
+            {relogging ? 'Opening browser…' : 'Re-connect Garmin'}
+          </button>
+        </div>
+      )}
 
       {pushError && (
         <p className="text-sm text-red-600">{pushError}</p>

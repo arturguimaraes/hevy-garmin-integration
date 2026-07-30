@@ -49,6 +49,14 @@ class BrowserLoginResponse(BaseModel):
     token: str
 
 
+class ValidateTokenRequest(BaseModel):
+    garminToken: str
+
+
+class ValidateTokenResponse(BaseModel):
+    valid: bool
+
+
 # ── Push ──────────────────────────────────────────────────────────────────────
 
 class WorkoutExercise(BaseModel):

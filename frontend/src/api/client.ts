@@ -79,6 +79,10 @@ export interface WorkoutPayloadType {
 }
 
 export const garmin = {
+  validateToken(garminToken: string): Promise<{ valid: boolean }> {
+    return request('POST', '/garmin/validate-token', { body: { garminToken } })
+  },
+
   browserLogin(): Promise<{ token: string }> {
     return request('POST', '/garmin/browser-login')
   },
