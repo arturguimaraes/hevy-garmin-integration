@@ -88,6 +88,7 @@ export type WizardAction =
   | { type: 'GARMIN_EMAIL_CHANGED'; email: string }
   | { type: 'GARMIN_PASSWORD_CHANGED'; password: string }
   | { type: 'GARMIN_MFA_PENDING'; sessionId: string }
+  | { type: 'GARMIN_MFA_CANCELLED' }
   | { type: 'GARMIN_AUTHENTICATED'; token: string }
   | { type: 'WORKOUT_PREFIX_CHANGED'; prefix: string }
   | { type: 'PUSH_RESULT_ADDED'; result: PushResult }

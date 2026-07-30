@@ -77,6 +77,15 @@ export function Step4ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
           <p className="text-sm text-gray-700">
             Garmin sent a verification code to your registered device or email.
           </p>
+          <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+            If you don't receive a code within a minute, Garmin may be rate-limiting this IP.{' '}
+            <button
+              onClick={() => dispatch({ type: 'GARMIN_MFA_CANCELLED' })}
+              className="underline hover:text-amber-900"
+            >
+              Go back and wait before retrying.
+            </button>
+          </div>
           <div>
             <label htmlFor="mfa-code" className="block text-sm font-medium text-gray-700">
               Verification code

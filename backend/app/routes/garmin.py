@@ -15,6 +15,7 @@ import logging
 
 from fastapi import APIRouter, HTTPException, status
 from garminconnect import Garmin
+from garminconnect.exceptions import GarminConnectTooManyRequestsError
 from garminconnect.workout import StrengthWorkout, WorkoutSegment, create_strength_set
 
 from app import session as sess
@@ -39,6 +40,12 @@ def login(body: GarminLoginRequest) -> GarminLoginResponse:
     try:
         client = Garmin(body.email, body.password, return_on_mfa=True)
         result = client.login()
+    except GarminConnectTooManyRequestsError as exc:
+        log.warning("Garmin login rate-limited: %s", exc)
+        raise HTTPException(
+            status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Garmin is rate-limiting this IP — wait a few minutes and try again",
+        ) from exc
     except Exception as exc:
         log.warning("Garmin login failed: %s", type(exc).__name__)
         raise HTTPException(
