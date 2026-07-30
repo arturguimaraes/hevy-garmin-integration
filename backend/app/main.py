@@ -94,3 +94,7 @@ def main() -> None:
         threading.Timer(1.5, webbrowser.open, args=[url]).start()
 
     uvicorn.run(app, host=args.host, port=args.port, log_level="warning")
+
+
+if __name__ == "__main__":
+    main()
