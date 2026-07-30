@@ -5,10 +5,8 @@
  * and never stored here — they live only in wizard state.
  */
 
-import { GarminLoginStatusEnum, MappingSourceEnum } from '../state/enums'
+import { MappingSourceEnum } from '../state/enums'
 import type { ExerciseMappingType, HevyRoutineType, MatchCandidateType, PushResultType } from '../state/types'
-
-export { GarminLoginStatusEnum }
 
 const BASE = '/api'
 
@@ -63,17 +61,6 @@ export const mapping = {
 
 // ── Garmin ────────────────────────────────────────────────────────────────────
 
-export interface GarminLoginResponseType {
-  status: GarminLoginStatusEnum
-  sessionId?: string
-  token?: string
-}
-
-export interface GarminMfaResponseType {
-  status: GarminLoginStatusEnum.Ok
-  token: string
-}
-
 export interface WorkoutExercisePayloadType {
   hevyName: string
   garminCategory: string
@@ -91,12 +78,8 @@ export interface WorkoutPayloadType {
 }
 
 export const garmin = {
-  login(email: string, password: string): Promise<GarminLoginResponseType> {
-    return request('POST', '/garmin/login', { body: { email, password } })
-  },
-
-  mfa(sessionId: string, code: string): Promise<GarminMfaResponseType> {
-    return request('POST', '/garmin/mfa', { body: { sessionId, code } })
+  browserLogin(): Promise<{ token: string }> {
+    return request('POST', '/garmin/browser-login')
   },
 
   push(

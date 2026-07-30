@@ -1,8 +1,6 @@
 """Pydantic request / response models for the API."""
 from __future__ import annotations
 
-from typing import Literal
-
 from pydantic import BaseModel
 
 
@@ -47,24 +45,7 @@ class ResolveResponse(BaseModel):
 
 # ── Garmin auth ───────────────────────────────────────────────────────────────
 
-class GarminLoginRequest(BaseModel):
-    email: str
-    password: str
-
-
-class GarminLoginResponse(BaseModel):
-    status: Literal["ok", "mfa_required"]
-    sessionId: str | None = None
-    token: str | None = None  # present when status == "ok"
-
-
-class GarminMfaRequest(BaseModel):
-    sessionId: str
-    code: str
-
-
-class GarminMfaResponse(BaseModel):
-    status: Literal["ok"]
+class BrowserLoginResponse(BaseModel):
     token: str
 
 

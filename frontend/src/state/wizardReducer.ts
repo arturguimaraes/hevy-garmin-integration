@@ -15,7 +15,6 @@ export const initialState: WizardStateType = {
   garminEmail: '',
   garminPassword: '',
   garminToken: null,
-  garminSessionId: null,
   workoutNamePrefix: '',
 
   pushResults: [],
@@ -60,22 +59,11 @@ export function wizardReducer(state: WizardStateType, action: WizardActionType):
     case ActionTypeEnum.GarminPasswordChanged:
       return { ...state, garminPassword: action.password }
 
-    case ActionTypeEnum.GarminMfaPending:
-      return { ...state, garminSessionId: action.sessionId }
-
-    case ActionTypeEnum.GarminMfaCancelled:
-      return { ...state, garminSessionId: null }
+    case ActionTypeEnum.GarminAuthenticated:
+      return { ...state, garminToken: action.token }
 
     case ActionTypeEnum.GarminSessionExpired:
-      return { ...state, garminToken: null, garminSessionId: null }
-
-    case ActionTypeEnum.GarminAuthenticated:
-      return {
-        ...state,
-        garminToken: action.token,
-        garminPassword: '',
-        garminSessionId: null,
-      }
+      return { ...state, garminToken: null }
 
     case ActionTypeEnum.WorkoutPrefixChanged:
       return { ...state, workoutNamePrefix: action.prefix }
