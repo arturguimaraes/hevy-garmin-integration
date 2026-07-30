@@ -1,5 +1,7 @@
-import { useReducer } from 'react'
+import { useCallback, useReducer } from 'react'
 import { initialState, wizardReducer } from './state/wizardReducer'
+import { loadSaved, saveCred } from './state/storage'
+import type { WizardAction } from './state/types'
 import { Step1ConnectHevy } from './steps/Step1ConnectHevy'
 import { Step2ChooseRoutines } from './steps/Step2ChooseRoutines'
 import { Step3MapExercises } from './steps/Step3MapExercises'
@@ -14,8 +16,22 @@ const STEP_LABELS = [
   'Review & push',
 ]
 
+function initState() {
+  return { ...initialState, ...loadSaved() }
+}
+
 export default function App() {
-  const [state, dispatch] = useReducer(wizardReducer, initialState)
+  const [state, rawDispatch] = useReducer(wizardReducer, undefined, initState)
+
+  const dispatch = useCallback(
+    (action: WizardAction) => {
+      if (action.type === 'HEVY_KEY_CHANGED') saveCred('hevyApiKey', action.key)
+      if (action.type === 'GARMIN_EMAIL_CHANGED') saveCred('garminEmail', action.email)
+      if (action.type === 'GARMIN_PASSWORD_CHANGED') saveCred('garminPassword', action.password)
+      rawDispatch(action)
+    },
+    [rawDispatch],
+  )
 
   function next() {
     dispatch({ type: 'NEXT_STEP' })

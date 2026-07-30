@@ -141,6 +141,21 @@ export function Step4ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
+          {(state.garminEmail || state.garminPassword) && (
+            <p className="text-xs text-gray-400">
+              Credentials saved on this device.{' '}
+              <button
+                type="button"
+                className="underline hover:text-gray-600"
+                onClick={() => {
+                  dispatch({ type: 'GARMIN_EMAIL_CHANGED', email: '' })
+                  dispatch({ type: 'GARMIN_PASSWORD_CHANGED', password: '' })
+                }}
+              >
+                Forget
+              </button>
+            </p>
+          )}
           {error && <p className="text-sm text-red-600">{error}</p>}
           <button
             onClick={handleLogin}
