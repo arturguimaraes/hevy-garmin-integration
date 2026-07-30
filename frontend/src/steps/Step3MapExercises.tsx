@@ -1,14 +1,8 @@
-/**
- * Step 3 — Exercise mapping.
- *
- * The full implementation lands in Milestone 3. This skeleton shows the
- * structure and wires up the navigation.
- */
-import type { WizardAction, WizardState } from '../state/types'
+import type { WizardActionType, WizardStateType } from '../state/types'
 
 interface Props {
-  state: WizardState
-  dispatch: React.Dispatch<WizardAction>
+  state: WizardStateType
+  dispatch: React.Dispatch<WizardActionType>
   onNext: () => void
   onBack: () => void
 }

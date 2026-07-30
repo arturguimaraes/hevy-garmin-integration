@@ -1,6 +1,7 @@
-import type { WizardAction, WizardState } from './types'
+import { ActionTypeEnum } from './enums'
+import type { WizardActionType, WizardStateType } from './types'
 
-export const initialState: WizardState = {
+export const initialState: WizardStateType = {
   step: 1,
 
   hevyApiKey: '',
@@ -20,75 +21,75 @@ export const initialState: WizardState = {
   pushResults: [],
 }
 
-export function wizardReducer(state: WizardState, action: WizardAction): WizardState {
+export function wizardReducer(state: WizardStateType, action: WizardActionType): WizardStateType {
   switch (action.type) {
-    case 'HEVY_KEY_CHANGED':
+    case ActionTypeEnum.HevyKeyChanged:
       return { ...state, hevyApiKey: action.key, hevyUsername: null }
 
-    case 'HEVY_VALIDATED':
+    case ActionTypeEnum.HevyValidated:
       return { ...state, hevyUsername: action.username }
 
-    case 'ROUTINES_LOADED':
+    case ActionTypeEnum.RoutinesLoaded:
       return { ...state, routines: action.routines, selectedRoutineIds: [] }
 
-    case 'ROUTINE_TOGGLED': {
+    case ActionTypeEnum.RoutineToggled: {
       const selected = state.selectedRoutineIds.includes(action.id)
         ? state.selectedRoutineIds.filter((id) => id !== action.id)
         : [...state.selectedRoutineIds, action.id]
       return { ...state, selectedRoutineIds: selected }
     }
 
-    case 'ALL_ROUTINES_TOGGLED':
+    case ActionTypeEnum.AllRoutinesToggled:
       return {
         ...state,
         selectedRoutineIds: action.selected ? state.routines.map((r) => r.id) : [],
       }
 
-    case 'MAPPING_UPDATED':
+    case ActionTypeEnum.MappingUpdated:
       return {
         ...state,
         mappings: { ...state.mappings, [action.hevyName]: action.mapping },
       }
 
-    case 'MAPPINGS_BULK_LOADED':
+    case ActionTypeEnum.MappingsBulkLoaded:
       return { ...state, mappings: { ...state.mappings, ...action.mappings } }
 
-    case 'GARMIN_EMAIL_CHANGED':
+    case ActionTypeEnum.GarminEmailChanged:
       return { ...state, garminEmail: action.email }
 
-    case 'GARMIN_PASSWORD_CHANGED':
+    case ActionTypeEnum.GarminPasswordChanged:
       return { ...state, garminPassword: action.password }
 
-    case 'GARMIN_MFA_PENDING':
+    case ActionTypeEnum.GarminMfaPending:
       return { ...state, garminSessionId: action.sessionId }
 
-    case 'GARMIN_MFA_CANCELLED':
+    case ActionTypeEnum.GarminMfaCancelled:
       return { ...state, garminSessionId: null }
 
-    case 'GARMIN_SESSION_EXPIRED':
+    case ActionTypeEnum.GarminSessionExpired:
       return { ...state, garminToken: null, garminSessionId: null }
 
-    case 'GARMIN_AUTHENTICATED':
+    case ActionTypeEnum.GarminAuthenticated:
       return {
         ...state,
         garminToken: action.token,
-        garminPassword: '', // clear password as soon as we have a token
+        garminPassword: '',
         garminSessionId: null,
       }
 
-    case 'WORKOUT_PREFIX_CHANGED':
+    case ActionTypeEnum.WorkoutPrefixChanged:
       return { ...state, workoutNamePrefix: action.prefix }
 
-    case 'PUSH_RESULT_ADDED':
+    case ActionTypeEnum.PushResultAdded:
       return { ...state, pushResults: [...state.pushResults, action.result] }
 
-    case 'NEXT_STEP':
-      return { ...state, step: Math.min(state.step + 1, 5) as WizardState['step'] }
+    case ActionTypeEnum.NextStep:
+      return { ...state, step: Math.min(state.step + 1, 5) as WizardStateType['step'] }
 
-    case 'PREV_STEP':
-      return { ...state, step: Math.max(state.step - 1, 1) as WizardState['step'] }
+    case ActionTypeEnum.PrevStep:
+      return { ...state, step: Math.max(state.step - 1, 1) as WizardStateType['step'] }
 
-    case 'RESET':
+    case ActionTypeEnum.Reset:
       return initialState
 
     default:

@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import type { WizardAction, WizardState } from '../state/types'
+import { ActionTypeEnum, GarminLoginStatusEnum } from '../state/enums'
+import type { WizardActionType, WizardStateType } from '../state/types'
 import { garmin } from '../api/client'
 import { saveCred } from '../state/storage'
 
 interface Props {
-  state: WizardState
-  dispatch: React.Dispatch<WizardAction>
+  state: WizardStateType
+  dispatch: React.Dispatch<WizardActionType>
   onNext: () => void
   onBack: () => void
 }
@@ -23,10 +24,10 @@ export function Step4ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
     setError(null)
     try {
       const res = await garmin.login(state.garminEmail, state.garminPassword)
-      if (res.status === 'mfa_required' && res.sessionId) {
-        dispatch({ type: 'GARMIN_MFA_PENDING', sessionId: res.sessionId })
-      } else if (res.status === 'ok' && res.token) {
-        dispatch({ type: 'GARMIN_AUTHENTICATED', token: res.token })
+      if (res.status === GarminLoginStatusEnum.MfaRequired && res.sessionId) {
+        dispatch({ type: ActionTypeEnum.GarminMfaPending, sessionId: res.sessionId })
+      } else if (res.status === GarminLoginStatusEnum.Ok && res.token) {
+        dispatch({ type: ActionTypeEnum.GarminAuthenticated, token: res.token })
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error')
@@ -41,7 +42,7 @@ export function Step4ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
     setError(null)
     try {
       const res = await garmin.mfa(state.garminSessionId, mfaCode.trim())
-      dispatch({ type: 'GARMIN_AUTHENTICATED', token: res.token })
+      dispatch({ type: ActionTypeEnum.GarminAuthenticated, token: res.token })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error')
     } finally {
@@ -80,7 +81,7 @@ export function Step4ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
               type="button"
               className="underline hover:text-gray-600"
               onClick={() => {
-                dispatch({ type: 'GARMIN_SESSION_EXPIRED' })
+                dispatch({ type: ActionTypeEnum.GarminSessionExpired })
                 saveCred('garminToken', '')
               }}
             >
@@ -96,7 +97,7 @@ export function Step4ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
           <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
             If you don't receive a code within a minute, Garmin may be rate-limiting this IP.{' '}
             <button
-              onClick={() => dispatch({ type: 'GARMIN_MFA_CANCELLED' })}
+              onClick={() => dispatch({ type: ActionTypeEnum.GarminMfaCancelled })}
               className="underline hover:text-amber-900"
             >
               Go back and wait before retrying.
@@ -137,7 +138,7 @@ export function Step4ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
               type="email"
               autoComplete="username"
               value={state.garminEmail}
-              onChange={(e) => dispatch({ type: 'GARMIN_EMAIL_CHANGED', email: e.target.value })}
+              onChange={(e) => dispatch({ type: ActionTypeEnum.GarminEmailChanged, email: e.target.value })}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
@@ -151,7 +152,7 @@ export function Step4ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
               autoComplete="current-password"
               value={state.garminPassword}
               onChange={(e) =>
-                dispatch({ type: 'GARMIN_PASSWORD_CHANGED', password: e.target.value })
+                dispatch({ type: ActionTypeEnum.GarminPasswordChanged, password: e.target.value })
               }
               onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -164,8 +165,8 @@ export function Step4ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
                 type="button"
                 className="underline hover:text-gray-600"
                 onClick={() => {
-                  dispatch({ type: 'GARMIN_EMAIL_CHANGED', email: '' })
-                  dispatch({ type: 'GARMIN_PASSWORD_CHANGED', password: '' })
+                  dispatch({ type: ActionTypeEnum.GarminEmailChanged, email: '' })
+                  dispatch({ type: ActionTypeEnum.GarminPasswordChanged, password: '' })
                 }}
               >
                 Forget

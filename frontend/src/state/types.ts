@@ -1,46 +1,48 @@
+import { ActionTypeEnum, MappingSourceEnum } from './enums'
+
 // ── Hevy data ─────────────────────────────────────────────────────────────────
 
-export interface HevySet {
-  type?: string; // "warmup" | "normal" | null
+export interface HevySetType {
+  type?: string;
   reps?: number;
   weight_kg?: number;
   duration_seconds?: number;
 }
 
-export interface HevyExercise {
+export interface HevyExerciseType {
   title: string;
-  sets: HevySet[];
+  sets: HevySetType[];
   rest_seconds?: number;
 }
 
-export interface HevyRoutine {
+export interface HevyRoutineType {
   id: string;
   title: string;
   folder_id?: string | null;
-  exercises: HevyExercise[];
+  exercises: HevyExerciseType[];
 }
 
 // ── Exercise mapping ───────────────────────────────────────────────────────────
 
-export interface MatchCandidate {
+export interface MatchCandidateType {
   name: string;
   category: string;
   exercise: string;
   score: number;
 }
 
-export interface ExerciseMapping {
+export interface ExerciseMappingType {
   hevyName: string;
   garminCategory: string;
   garminExercise: string;
   garminDisplayName: string;
   score: number;
-  source: 'auto' | 'manual';
+  source: MappingSourceEnum;
 }
 
 // ── Push results ──────────────────────────────────────────────────────────────
 
-export interface PushResult {
+export interface PushResultType {
   title: string;
   workoutId: string | null;
   error: string | null;
@@ -48,51 +50,45 @@ export interface PushResult {
 
 // ── Wizard state ──────────────────────────────────────────────────────────────
 
-export interface WizardState {
+export interface WizardStateType {
   step: 1 | 2 | 3 | 4 | 5;
 
-  // Step 1 — stored in state only, never localStorage
   hevyApiKey: string;
   hevyUsername: string | null;
 
-  // Step 2
-  routines: HevyRoutine[];
+  routines: HevyRoutineType[];
   selectedRoutineIds: string[];
 
-  // Step 3
-  // Mappings ARE allowed in localStorage — they are not credentials.
-  // Persisting them means returning users skip the review screen.
-  mappings: Record<string, ExerciseMapping>;
+  // Persisted to localStorage (not credentials)
+  mappings: Record<string, ExerciseMappingType>;
 
-  // Step 4 — stored in state only, never localStorage
   garminEmail: string;
   garminPassword: string;
   garminToken: string | null;
   garminSessionId: string | null;
   workoutNamePrefix: string;
 
-  // Step 5
-  pushResults: PushResult[];
+  pushResults: PushResultType[];
 }
 
 // ── Wizard actions ─────────────────────────────────────────────────────────────
 
-export type WizardAction =
-  | { type: 'HEVY_KEY_CHANGED'; key: string }
-  | { type: 'HEVY_VALIDATED'; username: string | null }
-  | { type: 'ROUTINES_LOADED'; routines: HevyRoutine[] }
-  | { type: 'ROUTINE_TOGGLED'; id: string }
-  | { type: 'ALL_ROUTINES_TOGGLED'; selected: boolean }
-  | { type: 'MAPPING_UPDATED'; hevyName: string; mapping: ExerciseMapping }
-  | { type: 'MAPPINGS_BULK_LOADED'; mappings: Record<string, ExerciseMapping> }
-  | { type: 'GARMIN_EMAIL_CHANGED'; email: string }
-  | { type: 'GARMIN_PASSWORD_CHANGED'; password: string }
-  | { type: 'GARMIN_MFA_PENDING'; sessionId: string }
-  | { type: 'GARMIN_MFA_CANCELLED' }
-  | { type: 'GARMIN_AUTHENTICATED'; token: string }
-  | { type: 'GARMIN_SESSION_EXPIRED' }
-  | { type: 'WORKOUT_PREFIX_CHANGED'; prefix: string }
-  | { type: 'PUSH_RESULT_ADDED'; result: PushResult }
-  | { type: 'NEXT_STEP' }
-  | { type: 'PREV_STEP' }
-  | { type: 'RESET' };
+export type WizardActionType =
+  | { type: ActionTypeEnum.HevyKeyChanged; key: string }
+  | { type: ActionTypeEnum.HevyValidated; username: string | null }
+  | { type: ActionTypeEnum.RoutinesLoaded; routines: HevyRoutineType[] }
+  | { type: ActionTypeEnum.RoutineToggled; id: string }
+  | { type: ActionTypeEnum.AllRoutinesToggled; selected: boolean }
+  | { type: ActionTypeEnum.MappingUpdated; hevyName: string; mapping: ExerciseMappingType }
+  | { type: ActionTypeEnum.MappingsBulkLoaded; mappings: Record<string, ExerciseMappingType> }
+  | { type: ActionTypeEnum.GarminEmailChanged; email: string }
+  | { type: ActionTypeEnum.GarminPasswordChanged; password: string }
+  | { type: ActionTypeEnum.GarminMfaPending; sessionId: string }
+  | { type: ActionTypeEnum.GarminMfaCancelled }
+  | { type: ActionTypeEnum.GarminAuthenticated; token: string }
+  | { type: ActionTypeEnum.GarminSessionExpired }
+  | { type: ActionTypeEnum.WorkoutPrefixChanged; prefix: string }
+  | { type: ActionTypeEnum.PushResultAdded; result: PushResultType }
+  | { type: ActionTypeEnum.NextStep }
+  | { type: ActionTypeEnum.PrevStep }
+  | { type: ActionTypeEnum.Reset };

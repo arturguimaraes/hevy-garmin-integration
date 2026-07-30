@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import type { WizardAction, WizardState } from '../state/types'
+import { ActionTypeEnum } from '../state/enums'
+import type { WizardActionType, WizardStateType } from '../state/types'
 import { hevy } from '../api/client'
 
 interface Props {
-  state: WizardState
-  dispatch: React.Dispatch<WizardAction>
+  state: WizardStateType
+  dispatch: React.Dispatch<WizardActionType>
   onNext: () => void
   onBack: () => void
 }
@@ -20,7 +21,7 @@ export function Step2ChooseRoutines({ state, dispatch, onNext, onBack }: Props) 
     setError(null)
     hevy
       .routines(state.hevyApiKey)
-      .then((res) => dispatch({ type: 'ROUTINES_LOADED', routines: res.routines }))
+      .then((res) => dispatch({ type: ActionTypeEnum.RoutinesLoaded, routines: res.routines }))
       .catch((err) => setError(err instanceof Error ? err.message : 'Unknown error'))
       .finally(() => setLoading(false))
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -66,7 +67,7 @@ export function Step2ChooseRoutines({ state, dispatch, onNext, onBack }: Props) 
               type="checkbox"
               checked={allSelected}
               onChange={(e) =>
-                dispatch({ type: 'ALL_ROUTINES_TOGGLED', selected: e.target.checked })
+                dispatch({ type: ActionTypeEnum.AllRoutinesToggled, selected: e.target.checked })
               }
               className="rounded border-gray-300 text-blue-600"
             />
@@ -85,7 +86,7 @@ export function Step2ChooseRoutines({ state, dispatch, onNext, onBack }: Props) 
                       id={`routine-${routine.id}`}
                       checked={selected}
                       onChange={() =>
-                        dispatch({ type: 'ROUTINE_TOGGLED', id: routine.id })
+                        dispatch({ type: ActionTypeEnum.RoutineToggled, id: routine.id })
                       }
                       className="rounded border-gray-300 text-blue-600"
                     />

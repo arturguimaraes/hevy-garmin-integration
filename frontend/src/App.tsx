@@ -1,7 +1,8 @@
 import { useCallback, useReducer } from 'react'
 import { initialState, wizardReducer } from './state/wizardReducer'
 import { loadSaved, saveCred } from './state/storage'
-import type { WizardAction } from './state/types'
+import { ActionTypeEnum } from './state/enums'
+import type { WizardActionType } from './state/types'
 import { Step1ConnectHevy } from './steps/Step1ConnectHevy'
 import { Step2ChooseRoutines } from './steps/Step2ChooseRoutines'
 import { Step3MapExercises } from './steps/Step3MapExercises'
@@ -29,28 +30,28 @@ export default function App() {
   const [state, rawDispatch] = useReducer(wizardReducer, undefined, initState)
 
   const dispatch = useCallback(
-    (action: WizardAction) => {
-      if (action.type === 'HEVY_KEY_CHANGED') saveCred('hevyApiKey', action.key)
-      if (action.type === 'GARMIN_EMAIL_CHANGED') {
+    (action: WizardActionType) => {
+      if (action.type === ActionTypeEnum.HevyKeyChanged) saveCred('hevyApiKey', action.key)
+      if (action.type === ActionTypeEnum.GarminEmailChanged) {
         saveCred('garminEmail', action.email)
-        if (action.email) saveCred('garminToken', '') // credential change invalidates saved token
+        if (action.email) saveCred('garminToken', '')
       }
-      if (action.type === 'GARMIN_PASSWORD_CHANGED') {
+      if (action.type === ActionTypeEnum.GarminPasswordChanged) {
         saveCred('garminPassword', action.password)
-        if (action.password) saveCred('garminToken', '') // credential change invalidates saved token
+        if (action.password) saveCred('garminToken', '')
       }
-      if (action.type === 'GARMIN_AUTHENTICATED') saveCred('garminToken', action.token)
-      if (action.type === 'GARMIN_SESSION_EXPIRED') saveCred('garminToken', '')
+      if (action.type === ActionTypeEnum.GarminAuthenticated) saveCred('garminToken', action.token)
+      if (action.type === ActionTypeEnum.GarminSessionExpired) saveCred('garminToken', '')
       rawDispatch(action)
     },
     [rawDispatch],
   )
 
   function next() {
-    dispatch({ type: 'NEXT_STEP' })
+    dispatch({ type: ActionTypeEnum.NextStep })
   }
   function back() {
-    dispatch({ type: 'PREV_STEP' })
+    dispatch({ type: ActionTypeEnum.PrevStep })
   }
 
   return (

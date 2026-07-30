@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import type { WizardAction, WizardState } from '../state/types'
+import { ActionTypeEnum } from '../state/enums'
+import type { WizardActionType, WizardStateType } from '../state/types'
 import { hevy } from '../api/client'
 
 interface Props {
-  state: WizardState
-  dispatch: React.Dispatch<WizardAction>
+  state: WizardStateType
+  dispatch: React.Dispatch<WizardActionType>
   onNext: () => void
 }
 
@@ -18,7 +19,7 @@ export function Step1ConnectHevy({ state, dispatch, onNext }: Props) {
     setError(null)
     try {
       const res = await hevy.validate(state.hevyApiKey.trim())
-      dispatch({ type: 'HEVY_VALIDATED', username: res.username })
+      dispatch({ type: ActionTypeEnum.HevyValidated, username: res.username })
       onNext()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error')
@@ -60,7 +61,7 @@ export function Step1ConnectHevy({ state, dispatch, onNext }: Props) {
             autoComplete="off"
             placeholder="hevy_api_key_…"
             value={state.hevyApiKey}
-            onChange={(e) => dispatch({ type: 'HEVY_KEY_CHANGED', key: e.target.value })}
+            onChange={(e) => dispatch({ type: ActionTypeEnum.HevyKeyChanged, key: e.target.value })}
             onKeyDown={(e) => e.key === 'Enter' && handleValidate()}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
@@ -70,7 +71,7 @@ export function Step1ConnectHevy({ state, dispatch, onNext }: Props) {
               <button
                 type="button"
                 className="underline hover:text-gray-600"
-                onClick={() => dispatch({ type: 'HEVY_KEY_CHANGED', key: '' })}
+                onClick={() => dispatch({ type: ActionTypeEnum.HevyKeyChanged, key: '' })}
               >
                 Forget
               </button>
