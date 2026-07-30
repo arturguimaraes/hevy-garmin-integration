@@ -1,72 +1,66 @@
 # Hevy → Garmin Connect
 
-A local wizard that reads your Hevy strength routines, maps each exercise onto
-Garmin's catalog with human review, and uploads them as native Garmin Connect
-strength workouts.
+Sync your Hevy strength routines to Garmin Connect. Runs locally on your machine — no account, no server, no data leaving your hands.
 
 ---
 
-**→ [First time? Run setup.sh](#setup)**
-&nbsp;&nbsp;
-**→ [Already set up? Run run.sh](#run)**
-&nbsp;&nbsp;
-**→ [Development](#development)**
+[First time setup](#first-time-setup) · [Run the app](#run-the-app) · [Development](#development)
 
 ---
 
-## Setup
-
-*Run once after cloning.*
+## First time setup
 
 ```bash
 git clone https://github.com/arturguimaraes/hevy-garmin-integration
 cd hevy-garmin-integration
-./setup.sh
+./dev/setup.sh
 ```
 
-`setup.sh` will:
-- Install [uv](https://docs.astral.sh/uv/) if you don't have it
-- Install Python 3.12 (via uv — no system changes)
-- Install Node dependencies and build the frontend *(requires Node 18+)*
+That's it. The script installs everything you need:
+
+- **uv** — Python package manager (if not already installed)
+- **Python 3.12** — managed by uv, no system changes
+- **Frontend** — Node dependencies + production build *(requires Node 18+)*
 
 ---
 
-## Run
+## Run the app
 
 ```bash
-./run.sh
+./dev/run.sh
 ```
 
-Opens at `http://127.0.0.1:8765`. Options:
+Opens at `http://127.0.0.1:8765`.
 
-```
-./run.sh --port N        # use a different port (default: 8765)
-./run.sh --no-browser    # don't open a browser tab automatically
+```bash
+./dev/run.sh --port 9000      # different port
+./dev/run.sh --no-browser     # don't open a tab automatically
 ```
 
 ---
 
 ## The wizard
 
-1. **Connect Hevy** — enter your API key from [hevy.com/settings?developer](https://www.hevy.com/settings?developer) *(Hevy Pro required)*
-2. **Choose routines** — select which routines to sync
-3. **Map exercises** — review and correct the automatic Garmin exercise matches
-4. **Connect Garmin** — log in with email + password (MFA supported)
-5. **Review and push** — upload all workouts to Garmin Connect
+| Step | What happens |
+|------|-------------|
+| 1. Connect Hevy | Paste your API key from [hevy.com/settings?developer](https://www.hevy.com/settings?developer) *(Pro required)* |
+| 2. Choose routines | Pick which routines to sync |
+| 3. Map exercises | Review the automatic Garmin matches — correct any that are wrong |
+| 4. Connect Garmin | Log in with email + password (MFA supported) |
+| 5. Review & push | Upload all workouts to Garmin Connect |
 
 ---
 
 ## Development
 
 ```bash
-# Terminal 1 — backend with hot reload
+# Terminal 1 — Python backend
 cd backend
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8765
 
-# Terminal 2 — frontend dev server (proxies /api → :8765)
+# Terminal 2 — React frontend (proxies /api → :8765)
 cd frontend
 npm run dev
-# → http://localhost:5173
 ```
 
 Tests:
@@ -80,23 +74,10 @@ cd frontend && npm test
 
 ## Why local-only?
 
-Garmin's login endpoint blocks datacenter IPs (Cloudflare 403), so a hosted
-backend can't log in on your behalf. Running locally means requests come from
-your own IP, and your Garmin password never leaves your machine.
-
----
-
-## Security
-
-- Credentials held in browser memory only — never written to disk or `localStorage`
-- Server binds to `127.0.0.1` — not reachable from the network
-- CORS locked to loopback origins
-- No analytics, telemetry, or outbound calls except to Hevy and Garmin
-
-See [SECURITY.md](SECURITY.md) for the full model.
+Garmin's login blocks datacenter IPs — a hosted backend can't authenticate on your behalf. Running locally means your Garmin password goes directly from your browser to Garmin's servers and nowhere else. Credentials are never written to disk.
 
 ---
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT · [SECURITY.md](SECURITY.md)
