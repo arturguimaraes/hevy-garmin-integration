@@ -11,6 +11,7 @@ export enum ActionTypeEnum {
   GarminAuthenticated = 'GARMIN_AUTHENTICATED',
   GarminSessionExpired = 'GARMIN_SESSION_EXPIRED',
   WorkoutPrefixChanged = 'WORKOUT_PREFIX_CHANGED',
+  PushResultsCleared = 'PUSH_RESULTS_CLEARED',
   PushResultAdded = 'PUSH_RESULT_ADDED',
   NextStep = 'NEXT_STEP',
   PrevStep = 'PREV_STEP',

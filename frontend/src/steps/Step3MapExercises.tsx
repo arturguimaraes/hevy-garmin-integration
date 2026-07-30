@@ -14,7 +14,7 @@ const GOOD_MATCH_THRESHOLD = 0.5
 
 function CheckIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-green-600 mx-auto">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 shrink-0 text-green-600">
       <polyline points="20 6 9 17 4 12"/>
     </svg>
   )
@@ -22,7 +22,7 @@ function CheckIcon() {
 
 function XIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-red-500 mx-auto">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 shrink-0 text-amber-500">
       <line x1="18" y1="6" x2="6" y2="18"/>
       <line x1="6" y1="6" x2="18" y2="18"/>
     </svg>
@@ -32,7 +32,6 @@ function XIcon() {
 export function Step3MapExercises({ state, dispatch, onNext, onBack }: Props) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [showDetails, setShowDetails] = useState(false)
 
   const selectedRoutines = state.routines.filter((r) =>
     state.selectedRoutineIds.includes(r.id),
@@ -41,17 +40,6 @@ export function Step3MapExercises({ state, dispatch, onNext, onBack }: Props) {
   const uniqueExercises = [
     ...new Set(selectedRoutines.flatMap((r) => r.exercises.map((e) => e.title))),
   ].sort()
-
-  // Build exercise → routine titles map (an exercise can appear in multiple routines)
-  const exerciseRoutines: Record<string, string[]> = {}
-  for (const routine of selectedRoutines) {
-    for (const ex of routine.exercises) {
-      if (!exerciseRoutines[ex.title]) exerciseRoutines[ex.title] = []
-      if (!exerciseRoutines[ex.title].includes(routine.title)) {
-        exerciseRoutines[ex.title].push(routine.title)
-      }
-    }
-  }
 
   useEffect(() => {
     const unmapped = uniqueExercises.filter((name) => !(name in state.mappings))
@@ -102,75 +90,68 @@ export function Step3MapExercises({ state, dispatch, onNext, onBack }: Props) {
         <div className="py-8 text-center text-sm text-gray-500">Matching exercises…</div>
       ) : (
         <>
-          {/* Summary */}
-          <div className="rounded-lg border border-gray-200 bg-white divide-y divide-gray-100">
-            <div className="flex items-center justify-between px-4 py-3">
-              <span className="text-sm text-gray-600">Total exercises</span>
-              <span className="text-sm font-semibold text-gray-900">{uniqueExercises.length}</span>
-            </div>
-            <div className="flex items-center justify-between px-4 py-3 bg-green-50">
-              <span className="flex items-center gap-2 text-sm text-green-800">
-                <CheckIcon />
-                Matched automatically
-              </span>
-              <span className="text-sm font-semibold text-green-800">{goodCount}</span>
-            </div>
-            <div className="flex items-center justify-between px-4 py-3 bg-red-50">
-              <span className="flex items-center gap-2 text-sm text-red-700">
-                <XIcon />
-                May need review
-              </span>
-              <span className="text-sm font-semibold text-red-700">{badCount}</span>
-            </div>
+          {/* Global summary */}
+          <div className="flex gap-4 text-sm">
+            <span className="text-gray-500">{uniqueExercises.length} exercises</span>
+            <span className="text-green-700">{goodCount} matched</span>
+            {badCount > 0 && (
+              <span className="text-amber-600">{badCount} need review</span>
+            )}
           </div>
 
-          <button
-            type="button"
-            onClick={() => setShowDetails((v) => !v)}
-            className="text-sm text-blue-600 underline"
-          >
-            {showDetails ? 'Hide details ↑' : 'Show details ↓'}
-          </button>
+          {/* Per-routine cards */}
+          <div className="space-y-4">
+            {selectedRoutines.map((routine) => {
+              const routineGood = routine.exercises.filter(
+                (ex) => state.mappings[ex.title]?.score >= GOOD_MATCH_THRESHOLD,
+              ).length
+              const routineBad = routine.exercises.length - routineGood
 
-          {/* Detail table */}
-          {showDetails && (
-            <div className="overflow-hidden rounded-lg border border-gray-200">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="px-4 py-2 text-left font-medium text-gray-600">Hevy</th>
-                    <th className="px-2 py-2 text-gray-400 w-6">→</th>
-                    <th className="px-4 py-2 text-left font-medium text-gray-600">Garmin</th>
-                    <th className="px-4 py-2 text-left font-medium text-gray-600">Workout</th>
-                    <th className="px-4 py-2 w-10"></th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {uniqueExercises.map((name) => {
-                    const m = state.mappings[name]
-                    const good = m !== undefined && m.score >= GOOD_MATCH_THRESHOLD
-                    return (
-                      <tr key={name} className={good ? 'bg-green-50' : 'bg-red-50'}>
-                        <td className="px-4 py-2.5 text-gray-900">{name}</td>
-                        <td className="px-2 py-2.5 text-gray-400 text-center">→</td>
-                        <td className="px-4 py-2.5 text-gray-700">
-                          {m
-                            ? m.garminDisplayName
-                            : <span className="italic text-gray-400">resolving…</span>}
-                        </td>
-                        <td className="px-4 py-2.5 text-gray-500">
-                          {(exerciseRoutines[name] ?? []).join(', ')}
-                        </td>
-                        <td className="px-4 py-2.5 text-center">
-                          {m && (good ? <CheckIcon /> : <XIcon />)}
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
+              return (
+                <div key={routine.id} className="rounded-lg border border-gray-200 bg-white overflow-hidden">
+                  {/* Card header */}
+                  <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
+                    <span className="text-sm font-semibold text-gray-900">{routine.title}</span>
+                    <div className="flex items-center gap-3 text-xs">
+                      <span className="text-green-700">{routineGood} ✓</span>
+                      {routineBad > 0 && (
+                        <span className="text-amber-600">{routineBad} ⚠</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Exercise rows */}
+                  <div className="divide-y divide-gray-100">
+                    {routine.exercises.map((ex) => {
+                      const m = state.mappings[ex.title]
+                      const good = m !== undefined && m.score >= GOOD_MATCH_THRESHOLD
+                      return (
+                        <div key={ex.title} className="flex items-center gap-3 px-4 py-2.5">
+                          <div className="shrink-0">
+                            {m ? (good ? <CheckIcon /> : <XIcon />) : (
+                              <div className="h-3.5 w-3.5 rounded-full bg-gray-200 animate-pulse" />
+                            )}
+                          </div>
+                          <span className="text-sm text-gray-700 min-w-0 truncate flex-1">
+                            {ex.title}
+                          </span>
+                          <span className="text-gray-400 text-sm shrink-0">→</span>
+                          <span className={`text-sm min-w-0 truncate flex-1 text-right ${good ? 'text-gray-700' : m ? 'text-amber-700' : 'text-gray-400 italic'}`}>
+                            {m ? m.garminDisplayName : 'resolving…'}
+                          </span>
+                          {m && (
+                            <span className="shrink-0 rounded px-1.5 py-0.5 text-xs bg-gray-100 text-gray-500 font-mono">
+                              {m.garminCategory}
+                            </span>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </>
       )}
 

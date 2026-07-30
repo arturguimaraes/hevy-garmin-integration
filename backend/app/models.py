@@ -64,6 +64,7 @@ class WorkoutExercise(BaseModel):
 
 class WorkoutPayload(BaseModel):
     title: str
+    date: str | None = None
     exercises: list[WorkoutExercise]
 
 
@@ -75,6 +76,7 @@ class PushRequest(BaseModel):
 class PushResult(BaseModel):
     title: str
     workoutId: str | None = None
+    scheduledDate: str | None = None
     error: str | None = None
 
 
