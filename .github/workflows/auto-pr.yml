@@ -1,0 +1,30 @@
+name: Auto PR development → main
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create PR if not exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXISTING=$(gh pr list --base main --head development --state open --json number --jq '.[0].number')
+          if [ -z "$EXISTING" ]; then
+            gh pr create \
+              --base main \
+              --head development \
+              --title "Merge development into main" \
+              --body "Auto-generated PR to merge latest changes from \`development\` into \`main\`."
+          else
+            echo "PR #$EXISTING already open, skipping creation."
+          fi
