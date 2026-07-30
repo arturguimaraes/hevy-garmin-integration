@@ -12,4 +12,12 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
+# ── Build frontend ─────────────────────────────────────────────────────────────
+echo "→ Building frontend…"
+cd "$PROJECT_ROOT/frontend"
+npm run build --silent
+cd "$PROJECT_ROOT"
+echo "✓ Frontend built"
+
+# ── Start backend ──────────────────────────────────────────────────────────────
 PYTHONPATH="$PROJECT_ROOT/backend" exec uv run --python 3.12 python -m app.main "$@"
