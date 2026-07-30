@@ -64,6 +64,18 @@ export function Step1ConnectHevy({ state, dispatch, onNext }: Props) {
             onKeyDown={(e) => e.key === 'Enter' && handleValidate()}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
+          {state.hevyApiKey && (
+            <p className="mt-1 text-xs text-gray-400">
+              Saved on this device.{' '}
+              <button
+                type="button"
+                className="underline hover:text-gray-600"
+                onClick={() => dispatch({ type: 'HEVY_KEY_CHANGED', key: '' })}
+              >
+                Forget
+              </button>
+            </p>
+          )}
         </div>
 
         {error && (

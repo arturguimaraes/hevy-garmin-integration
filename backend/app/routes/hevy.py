@@ -48,9 +48,10 @@ async def routines(
                 raise HTTPException(
                     status.HTTP_502_BAD_GATEWAY, detail="Hevy API returned an error"
                 )
-            batch = r.json().get("routines", [])
-            if not batch:
-                break
+            data = r.json()
+            batch = data.get("routines", [])
             all_routines.extend(batch)
+            if page >= data.get("page_count", 1):
+                break
             page += 1
     return {"routines": all_routines}

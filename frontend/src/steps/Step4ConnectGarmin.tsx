@@ -77,6 +77,15 @@ export function Step4ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
           <p className="text-sm text-gray-700">
             Garmin sent a verification code to your registered device or email.
           </p>
+          <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+            If you don't receive a code within a minute, Garmin may be rate-limiting this IP.{' '}
+            <button
+              onClick={() => dispatch({ type: 'GARMIN_MFA_CANCELLED' })}
+              className="underline hover:text-amber-900"
+            >
+              Go back and wait before retrying.
+            </button>
+          </div>
           <div>
             <label htmlFor="mfa-code" className="block text-sm font-medium text-gray-700">
               Verification code
@@ -132,6 +141,21 @@ export function Step4ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
+          {(state.garminEmail || state.garminPassword) && (
+            <p className="text-xs text-gray-400">
+              Credentials saved on this device.{' '}
+              <button
+                type="button"
+                className="underline hover:text-gray-600"
+                onClick={() => {
+                  dispatch({ type: 'GARMIN_EMAIL_CHANGED', email: '' })
+                  dispatch({ type: 'GARMIN_PASSWORD_CHANGED', password: '' })
+                }}
+              >
+                Forget
+              </button>
+            </p>
+          )}
           {error && <p className="text-sm text-red-600">{error}</p>}
           <button
             onClick={handleLogin}

@@ -62,6 +62,9 @@ export function wizardReducer(state: WizardState, action: WizardAction): WizardS
     case 'GARMIN_MFA_PENDING':
       return { ...state, garminSessionId: action.sessionId }
 
+    case 'GARMIN_MFA_CANCELLED':
+      return { ...state, garminSessionId: null }
+
     case 'GARMIN_AUTHENTICATED':
       return {
         ...state,
