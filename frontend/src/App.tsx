@@ -32,14 +32,8 @@ export default function App() {
   const dispatch = useCallback(
     (action: WizardActionType) => {
       if (action.type === ActionTypeEnum.HevyKeyChanged) saveCred('hevyApiKey', action.key)
-      if (action.type === ActionTypeEnum.GarminEmailChanged) {
-        saveCred('garminEmail', action.email)
-        if (action.email) saveCred('garminToken', '')
-      }
-      if (action.type === ActionTypeEnum.GarminPasswordChanged) {
-        saveCred('garminPassword', action.password)
-        if (action.password) saveCred('garminToken', '')
-      }
+      if (action.type === ActionTypeEnum.GarminEmailChanged) saveCred('garminEmail', action.email)
+      if (action.type === ActionTypeEnum.GarminPasswordChanged) saveCred('garminPassword', action.password)
       if (action.type === ActionTypeEnum.GarminAuthenticated) saveCred('garminToken', action.token)
       if (action.type === ActionTypeEnum.GarminSessionExpired) saveCred('garminToken', '')
       rawDispatch(action)

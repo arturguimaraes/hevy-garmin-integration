@@ -93,7 +93,10 @@ def main() -> None:
     if not args.no_browser:
         threading.Timer(1.5, webbrowser.open, args=[url]).start()
 
-    uvicorn.run(app, host=args.host, port=args.port, log_level="warning")
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s  %(name)s  %(message)s")
+    logging.getLogger("garminconnect").setLevel(logging.DEBUG)
+
+    uvicorn.run(app, host=args.host, port=args.port, log_level="info")
 
 
 if __name__ == "__main__":

@@ -59,13 +59,11 @@ export interface WizardStateType {
   routines: HevyRoutineType[];
   selectedRoutineIds: string[];
 
-  // Persisted to localStorage (not credentials)
   mappings: Record<string, ExerciseMappingType>;
 
   garminEmail: string;
   garminPassword: string;
   garminToken: string | null;
-  garminSessionId: string | null;
   workoutNamePrefix: string;
 
   pushResults: PushResultType[];
@@ -83,8 +81,6 @@ export type WizardActionType =
   | { type: ActionTypeEnum.MappingsBulkLoaded; mappings: Record<string, ExerciseMappingType> }
   | { type: ActionTypeEnum.GarminEmailChanged; email: string }
   | { type: ActionTypeEnum.GarminPasswordChanged; password: string }
-  | { type: ActionTypeEnum.GarminMfaPending; sessionId: string }
-  | { type: ActionTypeEnum.GarminMfaCancelled }
   | { type: ActionTypeEnum.GarminAuthenticated; token: string }
   | { type: ActionTypeEnum.GarminSessionExpired }
   | { type: ActionTypeEnum.WorkoutPrefixChanged; prefix: string }

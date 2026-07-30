@@ -8,8 +8,6 @@ export enum ActionTypeEnum {
   MappingsBulkLoaded = 'MAPPINGS_BULK_LOADED',
   GarminEmailChanged = 'GARMIN_EMAIL_CHANGED',
   GarminPasswordChanged = 'GARMIN_PASSWORD_CHANGED',
-  GarminMfaPending = 'GARMIN_MFA_PENDING',
-  GarminMfaCancelled = 'GARMIN_MFA_CANCELLED',
   GarminAuthenticated = 'GARMIN_AUTHENTICATED',
   GarminSessionExpired = 'GARMIN_SESSION_EXPIRED',
   WorkoutPrefixChanged = 'WORKOUT_PREFIX_CHANGED',
@@ -22,9 +20,4 @@ export enum ActionTypeEnum {
 export enum MappingSourceEnum {
   Auto = 'auto',
   Manual = 'manual',
-}
-
-export enum GarminLoginStatusEnum {
-  Ok = 'ok',
-  MfaRequired = 'mfa_required',
 }

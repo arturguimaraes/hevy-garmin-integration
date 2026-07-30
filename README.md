@@ -4,37 +4,25 @@ Sync your Hevy strength routines to Garmin Connect. Runs locally on your machine
 
 ---
 
-[First time setup](#first-time-setup) · [Run the app](#run-the-app) · [Development](#development)
-
----
-
-## First time setup
-
-```bash
-git clone https://github.com/arturguimaraes/hevy-garmin-integration
-cd hevy-garmin-integration
-./dev/setup.sh
-```
-
-That's it. The script installs everything you need:
-
-- **uv** — Python package manager (if not already installed)
-- **Python 3.12** — managed by uv, no system changes
-- **Frontend** — Node dependencies + production build *(requires Node 18+)*
+[Run the app](#run-the-app) · [Development](#development)
 
 ---
 
 ## Run the app
 
 ```bash
-./dev/run.sh
+git clone https://github.com/arturguimaraes/hevy-garmin-integration
+cd hevy-garmin-integration
+./run.sh
 ```
+
+First run installs everything automatically (~150 MB for the Playwright browser). Subsequent runs start in seconds.
 
 Opens at `http://127.0.0.1:8765`.
 
 ```bash
-./dev/run.sh --port 9000      # different port
-./dev/run.sh --no-browser     # don't open a tab automatically
+./run.sh --port 9000      # different port
+./run.sh --no-browser     # don't open a tab automatically
 ```
 
 ---
@@ -46,7 +34,7 @@ Opens at `http://127.0.0.1:8765`.
 | 1. Connect Hevy | Paste your API key from [hevy.com/settings?developer](https://www.hevy.com/settings?developer) *(Pro required)* |
 | 2. Choose routines | Pick which routines to sync |
 | 3. Map exercises | Review the automatic Garmin matches — correct any that are wrong |
-| 4. Connect Garmin | Log in with email + password (MFA supported). Session is saved locally so you only need to log in once. |
+| 4. Connect Garmin | A browser window opens; log in to Garmin Connect there. Your credentials go directly to Garmin — this app never sees them. Session token is saved locally so you only log in once. |
 | 5. Review & push | Upload all workouts to Garmin Connect |
 
 ---
@@ -79,16 +67,15 @@ All sensitive values are stored in your **browser's localStorage** (prefix `hg:`
 | What | Stored? | Notes |
 |------|---------|-------|
 | Hevy API key | ✓ localStorage | Cleared with the "Forget" link |
-| Garmin email + password | ✓ localStorage | Cleared with the "Forget" link |
-| Garmin session token | ✓ localStorage | OAuth DI token pair (access + refresh). Cleared on "Sign in with a different account" or when you type new credentials. |
+| Garmin session token | ✓ localStorage | OAuth token captured after browser login. Cleared on "Sign in with a different account". |
 
-The Garmin session token is a time-limited OAuth token, not your password. It can be revoked by changing your Garmin password. Storing it means you only need to authenticate once — future sessions skip the login step entirely.
+The Garmin session token is a time-limited OAuth token, not your password. It can be revoked by changing your Garmin password.
 
 ---
 
 ## Why local-only?
 
-Garmin's login blocks datacenter IPs — a hosted backend can't authenticate on your behalf. Running locally means your Garmin credentials go directly from your browser to Garmin's servers and nowhere else.
+Garmin's login flow is protected by Cloudflare bot detection — a hosted backend can't authenticate on your behalf. Running locally means a real browser window opens on your machine, bypassing Cloudflare entirely, and your credentials go directly to Garmin.
 
 ---
 
