@@ -4,6 +4,7 @@ export interface SavedCredentials {
   hevyApiKey: string
   garminEmail: string
   garminPassword: string
+  garminToken: string
 }
 
 export function loadSaved(): SavedCredentials {
@@ -11,6 +12,7 @@ export function loadSaved(): SavedCredentials {
     hevyApiKey: localStorage.getItem(`${P}hevyApiKey`) ?? '',
     garminEmail: localStorage.getItem(`${P}garminEmail`) ?? '',
     garminPassword: localStorage.getItem(`${P}garminPassword`) ?? '',
+    garminToken: localStorage.getItem(`${P}garminToken`) ?? '',
   }
 }
 

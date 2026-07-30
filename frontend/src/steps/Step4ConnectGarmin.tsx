@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { WizardAction, WizardState } from '../state/types'
 import { garmin } from '../api/client'
+import { saveCred } from '../state/storage'
 
 interface Props {
   state: WizardState
@@ -69,8 +70,23 @@ export function Step4ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
       </div>
 
       {isAuthenticated ? (
-        <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-          ✓ Authenticated with Garmin Connect
+        <div className="space-y-2">
+          <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+            ✓ Authenticated with Garmin Connect
+          </div>
+          <p className="text-xs text-gray-400">
+            Session saved on this device.{' '}
+            <button
+              type="button"
+              className="underline hover:text-gray-600"
+              onClick={() => {
+                dispatch({ type: 'GARMIN_SESSION_EXPIRED' })
+                saveCred('garminToken', '')
+              }}
+            >
+              Sign in with a different account
+            </button>
+          </p>
         </div>
       ) : needsMfa ? (
         <div className="space-y-4">
