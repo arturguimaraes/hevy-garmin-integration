@@ -1,0 +1,1 @@
+# hevy-garmin-integration
