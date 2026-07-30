@@ -11,14 +11,18 @@ Sync your Hevy strength routines to Garmin Connect. Runs locally on your machine
 ## Run the app
 
 ```bash
+./run.sh
+```
+
+Opens at `http://127.0.0.1:8765`. Installs everything on first run (~150 MB for the Playwright browser); subsequent runs start in seconds.
+
+**First time only** — clone the repo first:
+
+```bash
 git clone https://github.com/arturguimaraes/hevy-garmin-integration
 cd hevy-garmin-integration
 ./run.sh
 ```
-
-First run installs everything automatically (~150 MB for the Playwright browser). Subsequent runs start in seconds.
-
-Opens at `http://127.0.0.1:8765`.
 
 ```bash
 ./run.sh --port 9000      # different port
