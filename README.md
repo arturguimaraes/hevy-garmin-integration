@@ -6,114 +6,68 @@ strength workouts.
 
 ---
 
-## Requirements
-
-- Python 3.11+
-- Hevy Pro account with an API key from [hevy.com/settings?developer](https://www.hevy.com/settings?developer)
-- Garmin Connect account
+**[First time? Start here →](#first-time-setup)**
+&nbsp;·&nbsp;
+**[Already installed →](#run)**
+&nbsp;·&nbsp;
+**[Development →](#development)**
 
 ---
 
-## Quick start
+## First time setup
 
-### Step 1 — Install `uv` (one-time)
+### 1 — Install `uv`
 
-`uvx` is a command that ships with [`uv`](https://docs.astral.sh/uv/), a fast
-Python package manager. If you don't have it yet:
+`uvx` ships with [`uv`](https://docs.astral.sh/uv/). Install it once, then restart your terminal.
 
-**macOS / Linux:**
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
+| Platform | Command |
+|---|---|
+| macOS / Linux | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+| macOS (Homebrew) | `brew install uv` |
+| Windows (PowerShell) | `irm https://astral.sh/uv/install.sh \| iex` |
 
-**macOS (Homebrew):**
-```bash
-brew install uv
-```
-
-**Windows (PowerShell):**
-```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.sh | iex"
-```
-
-After install, restart your terminal (or run `source ~/.zshrc` / `source ~/.bashrc`)
-so that `uvx` is on your PATH.
-
-### Step 2 — Build the frontend (one-time)
-
-The wizard UI is a React app that must be built before the Python server can
-serve it. You need Node 18+ for this step.
+### 2 — Clone and build the frontend
 
 ```bash
-# Clone the repo
 git clone https://github.com/arturguimaraes/hevy-garmin-integration
 cd hevy-garmin-integration
-
-# Build frontend
 cd frontend && npm install && npm run build && cd ..
 ```
 
-### Step 3 — Run
+> Requires Node 18+. Only needed once (or after pulling frontend changes).
+
+### 3 — Run
 
 ```bash
 uvx --from . hevy-garmin
 ```
 
-This installs the package into a temporary virtual environment and starts the
-server. A browser tab opens at `http://127.0.0.1:8765` automatically.
+A browser tab opens at `http://127.0.0.1:8765`.
 
 ---
 
-## Alternative: install permanently
-
-If you prefer a permanent install instead of `uvx`:
+## Run
 
 ```bash
-pip install uv           # skip if already installed
-uv pip install -e .      # install the hevy-garmin package
-hevy-garmin              # run it
+uvx --from . hevy-garmin
 ```
 
----
-
-## CLI options
+Options:
 
 ```
-hevy-garmin [--port N] [--host HOST] [--no-browser]
-
-  --port N        Listen on port N (default: 8765)
-  --no-browser    Don't open a browser tab automatically
+--port N        Listen on port N (default: 8765)
+--no-browser    Don't open a browser tab automatically
 ```
 
 ---
 
 ## The wizard
 
-1. **Connect Hevy** — enter your Hevy API key
+1. **Connect Hevy** — enter your API key from [hevy.com/settings?developer](https://www.hevy.com/settings?developer) *(Hevy Pro required)*
 2. **Choose routines** — select which routines to sync
 3. **Map exercises** — review and correct the automatic Garmin exercise matches
 4. **Connect Garmin** — log in with email + password (MFA supported)
 5. **Review and push** — upload all workouts to Garmin Connect
-
----
-
-## Exercise mapping
-
-Garmin has 1,527 exercises across 47 categories. The wizard fuzzy-matches your
-Hevy exercise names and shows confidence scores. You review every mapping before
-anything is pushed. Your approved mappings are saved locally between sessions so
-you only review once.
-
----
-
-## Security model
-
-- Credentials are held in browser memory only and never written to disk.
-- The server binds to `127.0.0.1` — not reachable from the network.
-- CORS is locked to loopback origins.
-- No analytics, no telemetry, no outbound calls except to Hevy and Garmin.
-
-See [SECURITY.md](SECURITY.md) for the full model.
 
 ---
 
@@ -135,6 +89,7 @@ npm run dev
 ```
 
 Tests:
+
 ```bash
 pytest backend/tests/
 cd frontend && npm test
@@ -142,28 +97,23 @@ cd frontend && npm test
 
 ---
 
-## Repo layout
+## Why local-only?
 
-```
-backend/
-  app/
-    main.py          FastAPI app, serves frontend build
-    routes/          hevy.py, garmin.py, mapping.py
-    matcher.py       Exercise name → Garmin catalog fuzzy match
-    builder.py       Hevy blocks → StrengthWorkout payload
-    session.py       In-memory TTL store (MFA handoff only)
-    models.py        Pydantic request/response models
-  tests/
-frontend/
-  src/
-    steps/           One component per wizard step
-    api/             Typed fetch client
-    state/           Wizard reducer + types
-docs/                GitHub Pages landing page
-Dockerfile
-pyproject.toml
-SECURITY.md
-```
+Garmin's login endpoint blocks datacenter IPs (Cloudflare 403), so a hosted
+backend can't log in on your behalf. Running locally means requests come from
+your own IP, and your Garmin password never leaves your machine — structurally
+verifiable by anyone who reads the source.
+
+---
+
+## Security
+
+- Credentials held in browser memory only — never written to disk, logs, or `localStorage`
+- Server binds to `127.0.0.1` — not reachable from the network
+- CORS locked to loopback origins
+- No analytics, telemetry, or outbound calls except to Hevy and Garmin
+
+See [SECURITY.md](SECURITY.md) for the full model.
 
 ---
 
