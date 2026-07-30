@@ -88,9 +88,7 @@ def mfa(body: GarminMfaRequest) -> GarminMfaResponse:
 def push(body: PushRequest) -> PushResponse:
     try:
         client = Garmin("", "")
-        # When the string is longer than 512 chars the library treats it as
-        # serialised token data rather than a path or credentials.
-        client.login(body.garminToken)
+        client.client.loads(body.garminToken)
     except Exception as exc:
         log.warning("Garmin token load failed: %s", type(exc).__name__)
         raise HTTPException(
