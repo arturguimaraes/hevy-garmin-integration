@@ -6,57 +6,42 @@ strength workouts.
 
 ---
 
-**[First time? Start here →](#first-time-setup)**
-&nbsp;·&nbsp;
-**[Already installed →](#run)**
-&nbsp;·&nbsp;
-**[Development →](#development)**
+**→ [First time? Run setup.sh](#setup)**
+&nbsp;&nbsp;
+**→ [Already set up? Run run.sh](#run)**
+&nbsp;&nbsp;
+**→ [Development](#development)**
 
 ---
 
-## First time setup
+## Setup
 
-### 1 — Install `uv`
-
-`uvx` ships with [`uv`](https://docs.astral.sh/uv/). Install it once, then restart your terminal.
-
-| Platform | Command |
-|---|---|
-| macOS / Linux | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
-| macOS (Homebrew) | `brew install uv` |
-| Windows (PowerShell) | `irm https://astral.sh/uv/install.sh \| iex` |
-
-### 2 — Clone and build the frontend
+*Run once after cloning.*
 
 ```bash
 git clone https://github.com/arturguimaraes/hevy-garmin-integration
 cd hevy-garmin-integration
-cd frontend && npm install && npm run build && cd ..
+./setup.sh
 ```
 
-> Requires Node 18+. Only needed once (or after pulling frontend changes).
-
-### 3 — Run
-
-```bash
-uvx --from . hevy-garmin
-```
-
-A browser tab opens at `http://127.0.0.1:8765`.
+`setup.sh` will:
+- Install [uv](https://docs.astral.sh/uv/) if you don't have it
+- Install Python 3.12 (via uv — no system changes)
+- Install Node dependencies and build the frontend *(requires Node 18+)*
 
 ---
 
 ## Run
 
 ```bash
-uvx --from . hevy-garmin
+./run.sh
 ```
 
-Options:
+Opens at `http://127.0.0.1:8765`. Options:
 
 ```
---port N        Listen on port N (default: 8765)
---no-browser    Don't open a browser tab automatically
+./run.sh --port N        # use a different port (default: 8765)
+./run.sh --no-browser    # don't open a browser tab automatically
 ```
 
 ---
@@ -74,18 +59,14 @@ Options:
 ## Development
 
 ```bash
-# Install Python deps
-uv pip install -e ".[dev]"
-
 # Terminal 1 — backend with hot reload
 cd backend
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8765
 
-# Terminal 2 — frontend dev server (proxies /api to :8765)
+# Terminal 2 — frontend dev server (proxies /api → :8765)
 cd frontend
-npm install
 npm run dev
-# Open http://localhost:5173
+# → http://localhost:5173
 ```
 
 Tests:
@@ -101,14 +82,13 @@ cd frontend && npm test
 
 Garmin's login endpoint blocks datacenter IPs (Cloudflare 403), so a hosted
 backend can't log in on your behalf. Running locally means requests come from
-your own IP, and your Garmin password never leaves your machine — structurally
-verifiable by anyone who reads the source.
+your own IP, and your Garmin password never leaves your machine.
 
 ---
 
 ## Security
 
-- Credentials held in browser memory only — never written to disk, logs, or `localStorage`
+- Credentials held in browser memory only — never written to disk or `localStorage`
 - Server binds to `127.0.0.1` — not reachable from the network
 - CORS locked to loopback origins
 - No analytics, telemetry, or outbound calls except to Hevy and Garmin
