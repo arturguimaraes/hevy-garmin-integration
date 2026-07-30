@@ -9,4 +9,7 @@ if ! command -v uv &>/dev/null; then
   exit 1
 fi
 
-exec uvx --python 3.12 --from . hevy-garmin "$@"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
+PYTHONPATH="$PROJECT_ROOT/backend" exec uv run --python 3.12 python -m app.main "$@"
