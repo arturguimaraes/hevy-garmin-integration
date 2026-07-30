@@ -1,14 +1,9 @@
-/**
- * Step 5 — Review and push.
- *
- * Full implementation (per-workout progress, Garmin deep links) in Milestone 5.
- * This skeleton shows the layout and wires up the reset.
- */
-import type { WizardAction, WizardState } from '../state/types'
+import { ActionTypeEnum } from '../state/enums'
+import type { WizardActionType, WizardStateType } from '../state/types'
 
 interface Props {
-  state: WizardState
-  dispatch: React.Dispatch<WizardAction>
+  state: WizardStateType
+  dispatch: React.Dispatch<WizardActionType>
   onBack: () => void
 }
 
@@ -60,7 +55,7 @@ export function Step5ReviewPush({ state, dispatch, onBack }: Props) {
           ← Back
         </button>
         <button
-          onClick={() => dispatch({ type: 'RESET' })}
+          onClick={() => dispatch({ type: ActionTypeEnum.Reset })}
           className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
         >
           Start over

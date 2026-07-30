@@ -5,7 +5,10 @@
  * and never stored here — they live only in wizard state.
  */
 
-import type { ExerciseMapping, HevyRoutine, MatchCandidate, PushResult } from '../state/types'
+import { GarminLoginStatusEnum, MappingSourceEnum } from '../state/enums'
+import type { ExerciseMappingType, HevyRoutineType, MatchCandidateType, PushResultType } from '../state/types'
+
+export { GarminLoginStatusEnum }
 
 const BASE = '/api'
 
@@ -36,20 +39,20 @@ export const hevy = {
     return request('POST', '/hevy/validate', { body: { apiKey } })
   },
 
-  routines(apiKey: string): Promise<{ routines: HevyRoutine[] }> {
+  routines(apiKey: string): Promise<{ routines: HevyRoutineType[] }> {
     return request('GET', '/hevy/routines', { headers: { 'X-Hevy-Key': apiKey } })
   },
 }
 
 // ── Mapping ───────────────────────────────────────────────────────────────────
 
-export interface ResolveMatch {
+export interface ResolveMatchType {
   hevyName: string
-  top: MatchCandidate[]
+  top: MatchCandidateType[]
 }
 
 export const mapping = {
-  resolve(exerciseNames: string[]): Promise<{ matches: ResolveMatch[] }> {
+  resolve(exerciseNames: string[]): Promise<{ matches: ResolveMatchType[] }> {
     return request('POST', '/mapping/resolve', { body: { exerciseNames } })
   },
 
@@ -60,18 +63,18 @@ export const mapping = {
 
 // ── Garmin ────────────────────────────────────────────────────────────────────
 
-export interface GarminLoginResponse {
-  status: 'ok' | 'mfa_required'
+export interface GarminLoginResponseType {
+  status: GarminLoginStatusEnum
   sessionId?: string
   token?: string
 }
 
-export interface GarminMfaResponse {
-  status: 'ok'
+export interface GarminMfaResponseType {
+  status: GarminLoginStatusEnum.Ok
   token: string
 }
 
-export interface WorkoutExercisePayload {
+export interface WorkoutExercisePayloadType {
   hevyName: string
   garminCategory: string
   garminExercise: string
@@ -82,39 +85,40 @@ export interface WorkoutExercisePayload {
   timed: boolean
 }
 
-export interface WorkoutPayload {
+export interface WorkoutPayloadType {
   title: string
-  exercises: WorkoutExercisePayload[]
+  exercises: WorkoutExercisePayloadType[]
 }
 
 export const garmin = {
-  login(email: string, password: string): Promise<GarminLoginResponse> {
+  login(email: string, password: string): Promise<GarminLoginResponseType> {
     return request('POST', '/garmin/login', { body: { email, password } })
   },
 
-  mfa(sessionId: string, code: string): Promise<GarminMfaResponse> {
+  mfa(sessionId: string, code: string): Promise<GarminMfaResponseType> {
     return request('POST', '/garmin/mfa', { body: { sessionId, code } })
   },
 
   push(
     garminToken: string,
-    workouts: WorkoutPayload[],
-  ): Promise<{ results: PushResult[] }> {
+    workouts: WorkoutPayloadType[],
+  ): Promise<{ results: PushResultType[] }> {
     return request('POST', '/garmin/push', { body: { garminToken, workouts } })
   },
 }
 
-// Re-export mapping helper used in Step 3
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
 export function buildMappingFromCandidate(
   hevyName: string,
-  candidate: MatchCandidate,
-): ExerciseMapping {
+  candidate: MatchCandidateType,
+): ExerciseMappingType {
   return {
     hevyName,
     garminCategory: candidate.category,
     garminExercise: candidate.exercise,
     garminDisplayName: candidate.name,
     score: candidate.score,
-    source: 'auto',
+    source: MappingSourceEnum.Auto,
   }
 }

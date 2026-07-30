@@ -1,13 +1,13 @@
 const P = 'hg:'
 
-export interface SavedCredentials {
+export interface SavedCredentialsType {
   hevyApiKey: string
   garminEmail: string
   garminPassword: string
   garminToken: string
 }
 
-export function loadSaved(): SavedCredentials {
+export function loadSaved(): SavedCredentialsType {
   return {
     hevyApiKey: localStorage.getItem(`${P}hevyApiKey`) ?? '',
     garminEmail: localStorage.getItem(`${P}garminEmail`) ?? '',
@@ -16,7 +16,7 @@ export function loadSaved(): SavedCredentials {
   }
 }
 
-export function saveCred(key: keyof SavedCredentials, value: string) {
+export function saveCred(key: keyof SavedCredentialsType, value: string) {
   if (value) localStorage.setItem(`${P}${key}`, value)
   else localStorage.removeItem(`${P}${key}`)
 }
