@@ -13,18 +13,27 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Create PR if not exists
+      - name: Create or update PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          COMMIT_LOG=$(git log origin/main..HEAD --pretty=format:"- **%s**%n  %b" --no-merges | sed '/^  $/d')
+          BODY="Auto-generated PR to merge latest changes from \`development\` into \`main\`.
+
+          ## Commits
+          ${COMMIT_LOG}"
+
           EXISTING=$(gh pr list --base main --head development --state open --json number --jq '.[0].number')
           if [ -z "$EXISTING" ]; then
             gh pr create \
               --base main \
               --head development \
               --title "Merge development into main" \
-              --body "Auto-generated PR to merge latest changes from \`development\` into \`main\`."
+              --body "$BODY"
           else
-            echo "PR #$EXISTING already open, skipping creation."
+            gh pr edit "$EXISTING" --body "$BODY"
+            echo "PR #$EXISTING updated with latest commits."
           fi
