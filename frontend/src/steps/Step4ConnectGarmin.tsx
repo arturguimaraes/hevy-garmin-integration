@@ -45,11 +45,23 @@ function CheckIcon() {
 
 export function Step4ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
   const [loading, setLoading] = useState(false)
+  const [validating, setValidating] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const [copied, setCopied] = useState<'email' | 'password' | null>(null)
 
   const isAuthenticated = state.garminToken !== null
+
+  useEffect(() => {
+    if (!state.garminToken) return
+    setValidating(true)
+    garmin.validateToken(state.garminToken)
+      .then(({ valid }) => {
+        if (!valid) dispatch({ type: ActionTypeEnum.GarminSessionExpired })
+      })
+      .catch(() => dispatch({ type: ActionTypeEnum.GarminSessionExpired }))
+      .finally(() => setValidating(false))
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function copy(field: 'email' | 'password') {
     const text = field === 'email' ? state.garminEmail : state.garminPassword
@@ -82,7 +94,11 @@ export function Step4ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
         </p>
       </div>
 
-      {isAuthenticated ? (
+      {validating ? (
+        <div className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-500">
+          Checking Garmin session…
+        </div>
+      ) : isAuthenticated ? (
         <div className="space-y-2">
           <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
             ✓ Authenticated with Garmin Connect
@@ -200,7 +216,7 @@ export function Step4ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
         >
           ← Back
         </button>
-        {isAuthenticated && (
+        {isAuthenticated && !validating && (
           <button
             onClick={onNext}
             className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"

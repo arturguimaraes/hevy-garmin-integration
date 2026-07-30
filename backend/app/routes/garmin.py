@@ -24,6 +24,8 @@ from app.models import (
     PushRequest,
     PushResponse,
     PushResult,
+    ValidateTokenRequest,
+    ValidateTokenResponse,
 )
 
 router = APIRouter()
@@ -156,6 +158,17 @@ def _run_browser_login() -> str:
         "domain": "garmin.com",
     })
     return session_blob
+
+
+@router.post("/validate-token", response_model=ValidateTokenResponse)
+def validate_token(body: ValidateTokenRequest) -> ValidateTokenResponse:
+    try:
+        client = Garmin("", "")
+        client.client.loads(body.garminToken)
+        client.get_user_profile()
+        return ValidateTokenResponse(valid=True)
+    except Exception:
+        return ValidateTokenResponse(valid=False)
 
 
 @router.post("/browser-login", response_model=BrowserLoginResponse)
