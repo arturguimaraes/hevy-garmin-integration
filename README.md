@@ -37,7 +37,7 @@ cd hevy-garmin-integration
 |------|-------------|
 | 1. Connect Hevy | Paste your API key from [hevy.com/settings?developer](https://www.hevy.com/settings?developer) *(Pro required)* |
 | 2. Choose routines | Pick which routines to sync |
-| 3. Map exercises | Review the automatic Garmin matches — correct any that are wrong |
+| 3. Map exercises | Review the automatic Garmin matches; click any exercise to pick a different Garmin exercise from the suggestions or by searching the catalog |
 | 4. Connect Garmin | A browser window opens; log in to Garmin Connect there. Your credentials go directly to Garmin — this app never sees them. Session token is saved locally so you only log in once. |
 | 5. Review & push | Upload all workouts to Garmin Connect |
 
