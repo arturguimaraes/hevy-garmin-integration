@@ -8,9 +8,9 @@ interface Props {
 export function Summary({ total, matched, needReview }: Props) {
   return (
     <div className="flex gap-4 text-sm">
-      <span className="text-gray-500">{total} exercises</span>
-      <span className="text-green-700">{matched} matched</span>
-      {needReview > 0 && <span className="text-amber-600">{needReview} need review</span>}
+      <span className="text-fg-subtle">{total} exercises</span>
+      <span className="text-success">{matched} matched</span>
+      {needReview > 0 && <span className="text-warning">{needReview} need review</span>}
     </div>
   )
 }

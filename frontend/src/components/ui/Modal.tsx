@@ -51,23 +51,23 @@ export function Modal({ open, onClose, title, children, maxWidthClass = 'max-w-m
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
-        className={`absolute inset-0 bg-gray-900/40 transition-opacity duration-150 ${visible ? 'opacity-100' : 'opacity-0'}`}
+        className={`absolute inset-0 bg-black/50 transition-opacity duration-150 ${visible ? 'opacity-100' : 'opacity-0'}`}
         onClick={onClose}
       />
       <div
         role="dialog"
         aria-modal="true"
-        className={`relative flex max-h-[85vh] w-full ${maxWidthClass} flex-col overflow-hidden rounded-xl bg-white shadow-xl transition-all duration-150 ${
+        className={`relative flex max-h-[85vh] w-full ${maxWidthClass} flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-xl transition-all duration-150 ${
           visible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
         }`}
       >
         {title !== undefined && (
-          <div className="flex items-center justify-between border-b border-gray-100 px-5 py-3.5">
-            <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
+          <div className="flex items-center justify-between border-b border-border px-5 py-3.5">
+            <h3 className="text-sm font-semibold text-fg">{title}</h3>
             <button
               onClick={onClose}
               aria-label="Close"
-              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              className="rounded p-1 text-fg-subtle hover:bg-surface-muted hover:text-fg"
             >
               <XIcon />
             </button>

@@ -15,8 +15,8 @@ export function Step1ConnectHevy({ state, dispatch, onNext }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-gray-900">Connect Hevy</h2>
-        <p className="mt-1 text-sm text-gray-500">
+        <h2 className="text-2xl font-semibold text-fg">Connect Hevy</h2>
+        <p className="mt-1 text-sm text-fg-subtle">
           Your API key never leaves your machine — it's sent directly from your
           browser to the local server, which proxies it to Hevy.
         </p>
@@ -26,7 +26,7 @@ export function Step1ConnectHevy({ state, dispatch, onNext }: Props) {
         <ApiKeyField value={state.hevyApiKey} dispatch={dispatch} onSubmit={submit} />
 
         {error && (
-          <p className="text-sm text-red-600">
+          <p className="text-sm text-danger">
             {error.includes('401') || error.includes('Invalid')
               ? 'Invalid API key — check you copied it correctly and that your account is Hevy Pro.'
               : `Could not reach Hevy: ${error}`}
@@ -38,7 +38,7 @@ export function Step1ConnectHevy({ state, dispatch, onNext }: Props) {
         <button
           onClick={submit}
           disabled={!state.hevyApiKey.trim() || loading}
-          className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="rounded-md bg-accent px-5 py-2 text-sm font-medium text-accent-fg shadow-sm hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {loading ? 'Connecting…' : 'Connect →'}
         </button>

@@ -20,26 +20,26 @@ export function RoutineCard({ routine, mappings, open, onToggle, editingRowId, o
 
   return (
     <div
-      className={`overflow-hidden rounded-lg border bg-white ${done ? 'border-green-300' : 'border-amber-300'}`}
+      className={`overflow-hidden rounded-lg border bg-surface ${done ? 'border-success-border' : 'border-warning-border'}`}
     >
       <button
         type="button"
         onClick={onToggle}
         className={`flex w-full items-center gap-3 px-4 py-3 text-left ${open ? 'border-b' : ''} ${
-          done ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'
+          done ? 'bg-success-bg border-success-border' : 'bg-warning-bg border-warning-border'
         }`}
       >
         <ChevronDownIcon
-          className={`h-4 w-4 shrink-0 text-gray-500 transition-transform ${open ? '' : '-rotate-90'}`}
+          className={`h-4 w-4 shrink-0 text-fg-subtle transition-transform ${open ? '' : '-rotate-90'}`}
         />
-        <span className="flex-1 text-sm font-semibold text-gray-900">{routine.title}</span>
+        <span className="flex-1 text-sm font-semibold text-fg">{routine.title}</span>
         <div className="flex items-center gap-3 text-xs">
-          <span className="text-green-700">{good} ✓</span>
-          {bad > 0 && <span className="text-amber-700">{bad} ⚠</span>}
+          <span className="text-success">{good} ✓</span>
+          {bad > 0 && <span className="text-warning">{bad} ⚠</span>}
         </div>
       </button>
 
-      <div className={`divide-y divide-gray-100 ${open ? '' : 'hidden'}`}>
+      <div className={`divide-y divide-border ${open ? '' : 'hidden'}`}>
         {routine.exercises.map((ex, i) => {
           const rowId = `${routine.id}::${i}`
           return (

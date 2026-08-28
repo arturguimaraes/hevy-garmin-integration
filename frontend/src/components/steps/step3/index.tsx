@@ -42,17 +42,17 @@ export function Step3MapExercises({ state, dispatch, onNext, onBack }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-gray-900">Map exercises</h2>
-        <p className="mt-1 text-sm text-gray-500">
+        <h2 className="text-2xl font-semibold text-fg">Map exercises</h2>
+        <p className="mt-1 text-sm text-fg-subtle">
           Each Hevy exercise is matched to the closest Garmin equivalent. Click any row to review the
           match and pick a different Garmin exercise.
         </p>
       </div>
 
-      {error && <p className="text-sm text-red-600">Failed to resolve mappings: {error}</p>}
+      {error && <p className="text-sm text-danger">Failed to resolve mappings: {error}</p>}
 
       {loading ? (
-        <div className="py-8 text-center text-sm text-gray-500">Matching exercises…</div>
+        <div className="py-8 text-center text-sm text-fg-subtle">Matching exercises…</div>
       ) : (
         <>
           <Summary total={uniqueExercises.length} matched={matched} needReview={needReview} />
@@ -90,14 +90,16 @@ export function Step3MapExercises({ state, dispatch, onNext, onBack }: Props) {
       />
 
       <div className="flex justify-between">
-        <button onClick={onBack} className="text-sm text-gray-600 underline">
+        <button onClick={onBack} className="text-sm text-fg-muted underline">
           ← Back
         </button>
         <button
           onClick={onNext}
           disabled={loading}
-          className={`flex items-center gap-2 rounded-md px-5 py-2 text-sm font-medium text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-40 ${
-            needReview > 0 ? 'bg-amber-500 hover:bg-amber-600' : 'bg-blue-600 hover:bg-blue-700'
+          className={`flex items-center gap-2 rounded-md px-5 py-2 text-sm font-medium shadow-sm disabled:cursor-not-allowed disabled:opacity-40 ${
+            needReview > 0
+              ? 'bg-warning-solid text-warning-solid-fg hover:bg-warning-solid-hover'
+              : 'bg-accent text-accent-fg hover:bg-accent-hover'
           }`}
         >
           {needReview > 0 && <WarningTriangleIcon className="h-4 w-4 shrink-0" />}

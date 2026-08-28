@@ -20,15 +20,15 @@ export function Step4ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-gray-900">Connect Garmin</h2>
-        <p className="mt-1 text-sm text-gray-500">
+        <h2 className="text-2xl font-semibold text-fg">Connect Garmin</h2>
+        <p className="mt-1 text-sm text-fg-subtle">
           A browser window will open so you can log in to Garmin Connect directly.
           Store your credentials here for easy copy-paste — they are saved locally and never sent anywhere.
         </p>
       </div>
 
       {validating ? (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-500">
+        <div className="rounded-lg border border-border bg-surface-muted px-4 py-3 text-sm text-fg-subtle">
           Checking Garmin session…
         </div>
       ) : isAuthenticated ? (
@@ -50,14 +50,14 @@ export function Step4ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
         <button
           onClick={onBack}
           disabled={loading}
-          className="text-sm text-gray-600 underline disabled:opacity-40"
+          className="text-sm text-fg-muted underline disabled:opacity-40"
         >
           ← Back
         </button>
         {isAuthenticated && !validating && (
           <button
             onClick={onNext}
-            className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+            className="rounded-md bg-accent px-5 py-2 text-sm font-medium text-accent-fg shadow-sm hover:bg-accent-hover"
           >
             Review and push →
           </button>

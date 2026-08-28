@@ -1,1 +1,139 @@
 @import "tailwindcss";
+
+/* Enable `dark:` utilities for the rare case tokens can't express (e.g. shadows).
+   Theme is otherwise driven entirely by the semantic tokens below. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/*
+ * Semantic colour tokens. Components only ever reference these (via the
+ * Tailwind utilities registered in the `@theme inline` block) — never a raw
+ * `gray-400` / `blue-600` / etc. Swapping the palette here reskins the app.
+ *
+ * Contrast: every `*-subtle` / `*-muted` foreground clears WCAG AA (4.5:1) on
+ * its intended surface, in both themes.
+ */
+:root {
+  color-scheme: light;
+
+  --canvas: #f4f5f7;
+  --surface: #ffffff;
+  --surface-muted: #f1f3f6;
+
+  --border: #e2e5ea;
+  --border-strong: #c9cdd6;
+
+  --fg: #101828;
+  --fg-muted: #46506a;
+  --fg-subtle: #5b6472;
+
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-fg: #ffffff;
+  --accent-muted: #eef4ff;
+  --accent-text: #1d4ed8;
+  --accent-border: #bcd0ff;
+
+  --success: #05683e;
+  --success-bg: #ecfdf3;
+  --success-bg-hover: #d7f6e4;
+  --success-border: #a6e9c5;
+
+  --warning: #b54708;
+  --warning-bg: #fff8eb;
+  --warning-bg-hover: #fdeecb;
+  --warning-border: #fbdf94;
+  --warning-solid: #f59e0b;
+  --warning-solid-hover: #d97706;
+  --warning-solid-fg: #1c1206;
+
+  --danger: #b42318;
+  --danger-bg: #fef3f2;
+  --danger-border: #fdccc7;
+
+  --ring: #2563eb;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --canvas: #0f1115;
+  --surface: #181b21;
+  --surface-muted: #21252d;
+
+  --border: #2b303b;
+  --border-strong: #3a4150;
+
+  --fg: #f2f4f7;
+  --fg-muted: #c3c9d4;
+  --fg-subtle: #97a0af;
+
+  --accent: #2563eb;
+  --accent-hover: #3b82f6;
+  --accent-fg: #ffffff;
+  --accent-muted: #172554;
+  --accent-text: #93c5fd;
+  --accent-border: #1e3a8a;
+
+  --success: #4ade80;
+  --success-bg: #132a1e;
+  --success-bg-hover: #1b3a2a;
+  --success-border: #21402f;
+
+  --warning: #fbbf24;
+  --warning-bg: #2a2010;
+  --warning-bg-hover: #3a2d14;
+  --warning-border: #4a3a15;
+  --warning-solid: #f59e0b;
+  --warning-solid-hover: #fbbf24;
+  --warning-solid-fg: #1c1206;
+
+  --danger: #f87171;
+  --danger-bg: #2a1615;
+  --danger-border: #4d2521;
+
+  --ring: #3b82f6;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-muted: var(--accent-muted);
+  --color-accent-text: var(--accent-text);
+  --color-accent-border: var(--accent-border);
+
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-success-bg-hover: var(--success-bg-hover);
+  --color-success-border: var(--success-border);
+
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-warning-bg-hover: var(--warning-bg-hover);
+  --color-warning-border: var(--warning-border);
+  --color-warning-solid: var(--warning-solid);
+  --color-warning-solid-hover: var(--warning-solid-hover);
+  --color-warning-solid-fg: var(--warning-solid-fg);
+
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-danger-border: var(--danger-border);
+
+  --color-ring: var(--ring);
+}
+
+body {
+  background-color: var(--canvas);
+  color: var(--fg);
+}
