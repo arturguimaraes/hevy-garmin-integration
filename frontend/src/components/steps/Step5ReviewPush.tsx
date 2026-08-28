@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { garmin } from '../api/client'
-import { ActionTypeEnum } from '../state/enums'
-import type { ExerciseMappingType, HevyRoutineType, WizardActionType, WizardStateType } from '../state/types'
-import type { WorkoutExercisePayloadType } from '../api/client'
+import { garmin } from '@/api'
+import { ActionTypeEnum } from '@/state'
+import type { ExerciseMappingType, HevyRoutineType, WizardActionType, WizardStateType } from '@/state'
+import type { WorkoutExercisePayloadType } from '@/api'
 
 interface Props {
   state: WizardStateType

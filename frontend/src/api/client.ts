@@ -5,8 +5,7 @@
  * and never stored here — they live only in wizard state.
  */
 
-import { MappingSourceEnum } from '../state/enums'
-import type { ExerciseMappingType, HevyRoutineType, MatchCandidateType, PushResultType } from '../state/types'
+import type { HevyRoutineType, MatchCandidateType, PushResultType } from '@/state'
 
 const BASE = '/api'
 
@@ -93,20 +92,4 @@ export const garmin = {
   ): Promise<{ results: PushResultType[] }> {
     return request('POST', '/garmin/push', { body: { garminToken, workouts } })
   },
-}
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-export function buildMappingFromCandidate(
-  hevyName: string,
-  candidate: MatchCandidateType,
-): ExerciseMappingType {
-  return {
-    hevyName,
-    garminCategory: candidate.category,
-    garminExercise: candidate.exercise,
-    garminDisplayName: candidate.name,
-    score: candidate.score,
-    source: MappingSourceEnum.Auto,
-  }
 }
