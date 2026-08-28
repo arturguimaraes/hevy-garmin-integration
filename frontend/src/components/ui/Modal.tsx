@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { XIcon } from './icons'
 
 interface Props {
   open: boolean
@@ -11,15 +12,6 @@ interface Props {
 }
 
 const ANIM_MS = 150
-
-function CloseIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-      <line x1="18" y1="6" x2="6" y2="18" />
-      <line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-  )
-}
 
 /**
  * Centred dialog rendered into a portal, with a fading backdrop.
@@ -77,7 +69,7 @@ export function Modal({ open, onClose, title, children, maxWidthClass = 'max-w-m
               aria-label="Close"
               className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
             >
-              <CloseIcon />
+              <XIcon />
             </button>
           </div>
         )}

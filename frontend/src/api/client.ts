@@ -5,7 +5,7 @@
  * and never stored here — they live only in wizard state.
  */
 
-import type { HevyRoutineType, MatchCandidateType, PushResultType } from '../state/types'
+import type { HevyRoutineType, MatchCandidateType, PushResultType } from '@/state'
 
 const BASE = '/api'
 

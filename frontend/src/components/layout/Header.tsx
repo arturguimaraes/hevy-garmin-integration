@@ -1,4 +1,4 @@
-import type { WizardStateType } from '../../state/types'
+import type { WizardStateType } from '@/state'
 
 const STEP_LABELS = [
   'Connect Hevy',
