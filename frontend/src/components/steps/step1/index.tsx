@@ -1,6 +1,6 @@
 import type { WizardActionType, WizardStateType } from '@/state'
-import { useHevyValidation } from './useHevyValidation'
-import { ApiKeyField } from './components/ApiKeyField'
+import { useRoutines } from './useRoutines'
+import { RoutineList } from './components/RoutineList'
 
 interface Props {
   state: WizardStateType
@@ -8,39 +8,44 @@ interface Props {
   onNext: () => void
 }
 
-export function Step1ConnectHevy({ state, dispatch, onNext }: Props) {
-  const { loading, error, validate } = useHevyValidation(dispatch, onNext)
-  const submit = () => validate(state.hevyApiKey)
+export function Step1ChooseRoutines({ state, dispatch, onNext }: Props) {
+  const { loading, error } = useRoutines(state.routines.length > 0, dispatch)
+
+  if (loading) {
+    return <div className="py-16 text-center text-sm text-fg-subtle">Loading routines…</div>
+  }
+
+  if (error) {
+    return <p className="text-sm text-danger">Failed to load routines: {error}</p>
+  }
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-fg">Connect Hevy</h2>
+        <h2 className="text-2xl font-semibold text-fg">Choose routines</h2>
         <p className="mt-1 text-sm text-fg-subtle">
-          Your API key never leaves your machine — it's sent directly from your
-          browser to the local server, which proxies it to Hevy.
+          Select the routines to sync. Exercises are deduplicated across routines
+          at the mapping step.
         </p>
       </div>
 
-      <div className="space-y-4">
-        <ApiKeyField value={state.hevyApiKey} dispatch={dispatch} onSubmit={submit} />
-
-        {error && (
-          <p className="text-sm text-danger">
-            {error.includes('401') || error.includes('Invalid')
-              ? 'Invalid API key — check you copied it correctly and that your account is Hevy Pro.'
-              : `Could not reach Hevy: ${error}`}
-          </p>
-        )}
-      </div>
+      {state.routines.length === 0 ? (
+        <p className="text-sm text-fg-subtle">No routines found in your Hevy account.</p>
+      ) : (
+        <RoutineList
+          routines={state.routines}
+          selectedIds={state.selectedRoutineIds}
+          dispatch={dispatch}
+        />
+      )}
 
       <div className="flex justify-end">
         <button
-          onClick={submit}
-          disabled={!state.hevyApiKey.trim() || loading}
+          onClick={onNext}
+          disabled={state.selectedRoutineIds.length === 0}
           className="rounded-md bg-accent px-5 py-2 text-sm font-medium text-accent-fg shadow-sm hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          {loading ? 'Connecting…' : 'Connect →'}
+          Map exercises →
         </button>
       </div>
     </div>

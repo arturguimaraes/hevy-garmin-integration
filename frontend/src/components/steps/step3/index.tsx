@@ -1,12 +1,9 @@
-import { useState } from 'react'
-import { ActionTypeEnum } from '@/state'
 import type { WizardActionType, WizardStateType } from '@/state'
-import { WarningTriangleIcon } from '@/components/ui'
-import { isGood, type EditTarget } from './mapping'
-import { useExerciseMapping } from './useExerciseMapping'
-import { Summary } from './components/Summary'
-import { RoutineCard } from './components/RoutineCard'
-import { MappingModal } from './components/MappingModal'
+import { useGarminAuth } from './useGarminAuth'
+import { useClipboard } from './useClipboard'
+import { AuthenticatedNotice } from './components/AuthenticatedNotice'
+import { CredentialFields } from './components/CredentialFields'
+import { BrowserLoginPanel } from './components/BrowserLoginPanel'
 
 interface Props {
   state: WizardStateType
@@ -15,96 +12,56 @@ interface Props {
   onBack: () => void
 }
 
-export function Step3MapExercises({ state, dispatch, onNext, onBack }: Props) {
-  const [editing, setEditing] = useState<EditTarget | null>(null)
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
-
-  const selectedRoutines = state.routines.filter((r) => state.selectedRoutineIds.includes(r.id))
-  const uniqueExercises = [
-    ...new Set(selectedRoutines.flatMap((r) => r.exercises.map((e) => e.title))),
-  ].sort()
-
-  const { loading, error, candidates, candidatesLoading, loadCandidates } = useExerciseMapping({
-    uniqueExercises,
-    mappings: state.mappings,
-    dispatch,
-  })
-
-  function openEditor(rowId: string, hevyName: string) {
-    setEditing({ rowId, hevyName })
-    loadCandidates(hevyName)
-  }
-
-  const resolved = uniqueExercises.filter((name) => name in state.mappings)
-  const matched = resolved.filter((name) => isGood(state.mappings[name])).length
-  const needReview = resolved.length - matched
+export function Step3ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
+  const { validating, loading, error, login } = useGarminAuth(state.garminToken, dispatch)
+  const { copied, copy } = useClipboard()
+  const isAuthenticated = state.garminToken !== null
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-fg">Map exercises</h2>
+        <h2 className="text-2xl font-semibold text-fg">Connect Garmin</h2>
         <p className="mt-1 text-sm text-fg-subtle">
-          Each Hevy exercise is matched to the closest Garmin equivalent. Click any row to review the
-          match and pick a different Garmin exercise.
+          A browser window will open so you can log in to Garmin Connect directly.
+          Store your credentials here for easy copy-paste — they are saved locally and never sent anywhere.
         </p>
       </div>
 
-      {error && <p className="text-sm text-danger">Failed to resolve mappings: {error}</p>}
-
-      {loading ? (
-        <div className="py-8 text-center text-sm text-fg-subtle">Matching exercises…</div>
+      {validating ? (
+        <div className="rounded-lg border border-border bg-surface-muted px-4 py-3 text-sm text-fg-subtle">
+          Checking Garmin session…
+        </div>
+      ) : isAuthenticated ? (
+        <AuthenticatedNotice dispatch={dispatch} />
       ) : (
-        <>
-          <Summary total={uniqueExercises.length} matched={matched} needReview={needReview} />
-
-          <div className="space-y-4">
-            {selectedRoutines.map((routine) => (
-              <RoutineCard
-                key={routine.id}
-                routine={routine}
-                mappings={state.mappings}
-                open={!collapsed[routine.id]}
-                onToggle={() =>
-                  setCollapsed((prev) => ({ ...prev, [routine.id]: !prev[routine.id] }))
-                }
-                editingRowId={editing?.rowId ?? null}
-                onEditRow={openEditor}
-              />
-            ))}
-          </div>
-        </>
+        <div className="space-y-4">
+          <CredentialFields
+            email={state.garminEmail}
+            password={state.garminPassword}
+            dispatch={dispatch}
+            copied={copied}
+            onCopy={copy}
+          />
+          <BrowserLoginPanel loading={loading} error={error} onLogin={login} />
+        </div>
       )}
 
-      <MappingModal
-        target={editing}
-        current={editing ? state.mappings[editing.hevyName] : undefined}
-        suggestions={editing ? candidates[editing.hevyName] : undefined}
-        suggestionsLoading={editing ? candidatesLoading === editing.hevyName : false}
-        onPick={(mp) => {
-          if (editing) {
-            dispatch({ type: ActionTypeEnum.MappingUpdated, hevyName: editing.hevyName, mapping: mp })
-          }
-          setEditing(null)
-        }}
-        onClose={() => setEditing(null)}
-      />
-
       <div className="flex justify-between">
-        <button onClick={onBack} className="text-sm text-fg-muted underline">
+        <button
+          onClick={onBack}
+          disabled={loading}
+          className="text-sm text-fg-muted underline disabled:opacity-40"
+        >
           ← Back
         </button>
-        <button
-          onClick={onNext}
-          disabled={loading}
-          className={`flex items-center gap-2 rounded-md px-5 py-2 text-sm font-medium shadow-sm disabled:cursor-not-allowed disabled:opacity-40 ${
-            needReview > 0
-              ? 'bg-warning-solid text-warning-solid-fg hover:bg-warning-solid-hover'
-              : 'bg-accent text-accent-fg hover:bg-accent-hover'
-          }`}
-        >
-          {needReview > 0 && <WarningTriangleIcon className="h-4 w-4 shrink-0" />}
-          Connect Garmin →
-        </button>
+        {isAuthenticated && !validating && (
+          <button
+            onClick={onNext}
+            className="rounded-md bg-accent px-5 py-2 text-sm font-medium text-accent-fg shadow-sm hover:bg-accent-hover"
+          >
+            Review and push →
+          </button>
+        )}
       </div>
     </div>
   )

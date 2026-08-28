@@ -2,13 +2,11 @@ import { useEffect, useState } from 'react'
 import { ActionTypeEnum } from '@/state'
 import type { WizardActionType } from '@/state'
 import { hevy } from '@/api'
+import { useHevy } from '@/components/hevy'
 
 /** Loads the user's Hevy routines once, unless they're already in wizard state. */
-export function useRoutines(
-  apiKey: string,
-  alreadyLoaded: boolean,
-  dispatch: React.Dispatch<WizardActionType>,
-) {
+export function useRoutines(alreadyLoaded: boolean, dispatch: React.Dispatch<WizardActionType>) {
+  const { apiKey } = useHevy()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 

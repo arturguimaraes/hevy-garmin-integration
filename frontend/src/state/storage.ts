@@ -1,7 +1,6 @@
 const P = 'hg:'
 
 export interface SavedCredentialsType {
-  hevyApiKey: string
   garminEmail: string
   garminPassword: string
   garminToken: string
@@ -9,7 +8,6 @@ export interface SavedCredentialsType {
 
 export function loadSaved(): SavedCredentialsType {
   return {
-    hevyApiKey: localStorage.getItem(`${P}hevyApiKey`) ?? '',
     garminEmail: localStorage.getItem(`${P}garminEmail`) ?? '',
     garminPassword: localStorage.getItem(`${P}garminPassword`) ?? '',
     garminToken: localStorage.getItem(`${P}garminToken`) ?? '',

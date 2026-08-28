@@ -4,9 +4,6 @@ import type { WizardActionType, WizardStateType } from './types'
 export const initialState: WizardStateType = {
   step: 1,
 
-  hevyApiKey: '',
-  hevyUsername: null,
-
   routines: [],
   selectedRoutineIds: [],
 
@@ -22,12 +19,6 @@ export const initialState: WizardStateType = {
 
 export function wizardReducer(state: WizardStateType, action: WizardActionType): WizardStateType {
   switch (action.type) {
-    case ActionTypeEnum.HevyKeyChanged:
-      return { ...state, hevyApiKey: action.key, hevyUsername: null }
-
-    case ActionTypeEnum.HevyValidated:
-      return { ...state, hevyUsername: action.username }
-
     case ActionTypeEnum.RoutinesLoaded:
       return {
         ...state,
@@ -79,13 +70,15 @@ export function wizardReducer(state: WizardStateType, action: WizardActionType):
       return { ...state, pushResults: [...state.pushResults, action.result] }
 
     case ActionTypeEnum.NextStep:
-      return { ...state, step: Math.min(state.step + 1, 5) as WizardStateType['step'] }
+      return { ...state, step: Math.min(state.step + 1, 4) as WizardStateType['step'] }
 
     case ActionTypeEnum.PrevStep:
       return { ...state, step: Math.max(state.step - 1, 1) as WizardStateType['step'] }
 
     case ActionTypeEnum.Reset:
-      return initialState
+      // Keep the Garmin session so returning to the menu and re-entering the
+      // wizard doesn't force another browser login.
+      return { ...initialState, garminToken: state.garminToken }
 
     default:
       return state
