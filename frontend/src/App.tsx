@@ -8,6 +8,7 @@ import { Step2ChooseRoutines } from './steps/Step2ChooseRoutines'
 import { Step3MapExercises } from './steps/Step3MapExercises'
 import { Step4ConnectGarmin } from './steps/Step4ConnectGarmin'
 import { Step5ReviewPush } from './steps/Step5ReviewPush'
+import { Footer } from './components/Footer'
 
 const STEP_LABELS = [
   'Connect Hevy',
@@ -49,7 +50,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex min-h-screen flex-col bg-gray-50">
       <header className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-3xl px-6 py-4">
           <div className="flex items-center justify-between">
@@ -107,6 +108,8 @@ export default function App() {
           <Step5ReviewPush state={state} dispatch={dispatch} onBack={back} />
         )}
       </main>
+
+      <Footer />
     </div>
   )
 }
