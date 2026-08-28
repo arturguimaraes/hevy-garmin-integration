@@ -39,6 +39,16 @@ Update this section whenever:
 - The auth mechanism for an existing service changes (e.g. different token format, different storage key, different login flow)
 - A new backend route is added or removed that talks to an external service
 
+## Isolation & modularization
+
+Always prefer isolation and modularization. When adding a feature, keep its logic, state, and UI together in a single self-contained folder with a barrel (`index.ts`) exposing a **minimal** public surface. Wiring it into the rest of the app should be a few one-line touch points (mount a provider, drop in a component) — feature internals must not leak across the codebase.
+
+- One feature = one folder under `frontend/src/components/<feature>/` (or `src/<module>/` for non-UI modules like `state`, `api`).
+- Cross-feature imports go through the barrel only, using the `@/` alias.
+- Split a file into a feature folder before it grows unwieldy, not after.
+
+Example: the theme/appearance feature lives entirely in `frontend/src/components/config/` (`ThemeProvider`, `theme.ts`, `ConfigMenu`, `ConfigModal`, `ThemeControl`); `main.tsx` and `Header.tsx` each touch it in one line.
+
 ## Code cleanup
 
 When making any change, **remove code that is no longer used**. Do not leave dead code behind.

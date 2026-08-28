@@ -64,6 +64,12 @@ cd frontend && npm test
 
 ---
 
+## Appearance
+
+The app is **dark by default**. Click the gear icon in the top-right to open Settings and switch between **Dark**, **Light**, and **System** (follows your OS). The choice is saved in `localStorage` under `hg:theme`.
+
+---
+
 ## Credential & session storage
 
 All sensitive values are stored in your **browser's localStorage** (prefix `hg:`), never on disk or sent to any third party.
@@ -72,6 +78,7 @@ All sensitive values are stored in your **browser's localStorage** (prefix `hg:`
 |------|---------|-------|
 | Hevy API key | ✓ localStorage | Cleared with the "Forget" link |
 | Garmin session token | ✓ localStorage | OAuth token captured after browser login. Cleared on "Sign in with a different account". |
+| Theme preference | ✓ localStorage | `hg:theme` — not sensitive; UI preference only |
 
 The Garmin session token is a time-limited OAuth token, not your password. It can be revoked by changing your Garmin password.
 
