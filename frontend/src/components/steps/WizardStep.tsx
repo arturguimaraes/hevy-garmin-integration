@@ -1,9 +1,9 @@
 import type { WizardActionType, WizardStateType } from '@/state'
-import { Step1ConnectHevy } from './Step1ConnectHevy'
-import { Step2ChooseRoutines } from './Step2ChooseRoutines'
+import { Step1ConnectHevy } from './step1'
+import { Step2ChooseRoutines } from './step2'
 import { Step3MapExercises } from './step3'
-import { Step4ConnectGarmin } from './Step4ConnectGarmin'
-import { Step5ReviewPush } from './Step5ReviewPush'
+import { Step4ConnectGarmin } from './step4'
+import { Step5ReviewPush } from './step5'
 
 interface Props {
   state: WizardStateType
