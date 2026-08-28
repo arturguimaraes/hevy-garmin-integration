@@ -21,19 +21,29 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           COMMIT_LOG=$(git log origin/main..HEAD --pretty=format:"- **%s**%n  %b" --no-merges | sed '/^  $/d')
+          COMMIT_COUNT=$(git rev-list --count --no-merges origin/main..HEAD)
+          LATEST_SUBJECT=$(git log -1 --pretty=format:"%s" origin/main..HEAD)
+          if [ "$COMMIT_COUNT" = "1" ]; then COUNT_LABEL="1 commit"; else COUNT_LABEL="${COMMIT_COUNT} commits"; fi
+
           BODY="Auto-generated PR to merge latest changes from \`development\` into \`main\`.
 
           ## Commits
           ${COMMIT_LOG}"
 
+          # Build the title for a given PR number.
+          make_title() { echo "[#${1}] development → main — ${LATEST_SUBJECT} (${COUNT_LABEL})"; }
+
           EXISTING=$(gh pr list --base main --head development --state open --json number --jq '.[0].number')
           if [ -z "$EXISTING" ]; then
-            gh pr create \
+            PR_URL=$(gh pr create \
               --base main \
               --head development \
-              --title "Merge development into main" \
-              --body "$BODY"
+              --title "development → main — ${LATEST_SUBJECT} (${COUNT_LABEL})" \
+              --body "$BODY")
+            NUMBER=$(gh pr view "$PR_URL" --json number --jq '.number')
+            gh pr edit "$PR_URL" --title "$(make_title "$NUMBER")"
+            echo "PR #$NUMBER created."
           else
-            gh pr edit "$EXISTING" --body "$BODY"
+            gh pr edit "$EXISTING" --title "$(make_title "$EXISTING")" --body "$BODY"
             echo "PR #$EXISTING updated with latest commits."
           fi
