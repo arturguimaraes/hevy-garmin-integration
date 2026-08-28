@@ -2,7 +2,7 @@ import type { WizardActionType, WizardStateType } from '@/state'
 import { Step1ConnectHevy } from './step1'
 import { Step2ChooseRoutines } from './step2'
 import { Step3MapExercises } from './step3'
-import { Step4ConnectGarmin } from './Step4ConnectGarmin'
+import { Step4ConnectGarmin } from './step4'
 import { Step5ReviewPush } from './Step5ReviewPush'
 
 interface Props {
