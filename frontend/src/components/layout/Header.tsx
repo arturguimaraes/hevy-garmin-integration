@@ -1,4 +1,5 @@
 import type { WizardStateType } from '@/state'
+import { ConfigMenu } from '@/components/config'
 
 const STEP_LABELS = [
   'Connect Hevy',
@@ -18,9 +19,12 @@ export function Header({ step }: Props) {
       <div className="mx-auto max-w-3xl px-6 py-4">
         <div className="flex items-center justify-between">
           <h1 className="text-lg font-semibold text-fg">Hevy → Garmin Connect</h1>
-          <span className="text-sm text-fg-subtle">
-            Step {step} of {STEP_LABELS.length}
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-fg-subtle">
+              Step {step} of {STEP_LABELS.length}
+            </span>
+            <ConfigMenu />
+          </div>
         </div>
 
         {/* Step progress bar */}
