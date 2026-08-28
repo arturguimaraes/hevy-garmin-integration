@@ -1,7 +1,7 @@
-import type { WizardActionType, WizardStateType } from '../../state/types'
+import type { WizardActionType, WizardStateType } from '@/state'
 import { Step1ConnectHevy } from './Step1ConnectHevy'
 import { Step2ChooseRoutines } from './Step2ChooseRoutines'
-import { Step3MapExercises } from './Step3MapExercises'
+import { Step3MapExercises } from './step3'
 import { Step4ConnectGarmin } from './Step4ConnectGarmin'
 import { Step5ReviewPush } from './Step5ReviewPush'
 
