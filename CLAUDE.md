@@ -29,7 +29,7 @@ This app integrates with two external services. Keep these descriptions accurate
 ### Garmin Connect
 
 - **What**: Uploads strength workouts to Garmin Connect via the garminconnect library (which wraps the `garth` OAuth client).
-- **Auth**: Step 4 opens a real Chromium browser (Playwright, non-headless) pointed at `connect.garmin.com/signin`. The user logs in manually. The backend intercepts the OAuth token from network responses during login, serialises it as a garth session blob (`JSON` with `oauth2_token`), and returns it to the frontend. Stored in `localStorage` under `hg:garminToken`.
+- **Auth**: Step 4 opens a real Chromium browser (Playwright, non-headless) pointed at `connect.garmin.com/signin`. The user logs in manually. The backend intercepts the DI token from `diauth.garmin.com` network responses (preferred), or falls back to the `JWT_WEB` cookie. Serialised as `{"di_token": ...}` or `{"jwt_web": ...}` and returned to the frontend. Stored in `localStorage` under `hg:garminToken`.
 - **Key endpoints**: `POST /api/garmin/browser-login` (opens browser, blocks until login completes, returns token), `POST /api/garmin/push` (uploads workouts using the stored token — stateless).
 - **Libraries**: `playwright` for the browser login, `garminconnect` + `garth` for workout upload.
 - **Why browser-based**: Garmin's Cloudflare protection blocks all automated HTTP login strategies. A real browser bypasses this entirely.

@@ -2,10 +2,15 @@
 
 Auth flow:
   POST /api/garmin/browser-login  ->  opens Chromium, user logs in, returns { token }
+  POST /api/garmin/validate-token ->  { valid: bool }
   POST /api/garmin/push           ->  { results: [...] }
 
-The token is a serialised garth session blob. The frontend holds it in localStorage
-and sends it back on /push. The backend never stores it — /push is stateless.
+Token format stored in the frontend:
+  {"di_token": "...", "di_refresh_token": "...", "di_client_id": null}
+  -- or, if the web flow doesn't hit diauth.garmin.com --
+  {"jwt_web": "..."}
+
+The backend never stores the token — /push and /validate-token are stateless.
 """
 from __future__ import annotations
 
@@ -49,20 +54,40 @@ def _is_garmin_dashboard(url: str) -> bool:
     )
 
 
+def _restore_session(garmin_token: str) -> Garmin:
+    """Restore an authenticated Garmin client from a stored token blob.
+
+    Supports two formats:
+    - {"di_token": ..., "di_refresh_token": ..., "di_client_id": ...}
+      (garminconnect Client native format — preferred)
+    - {"jwt_web": ...}
+      (fallback when the browser flow doesn't surface the DI token)
+    """
+    data = json.loads(garmin_token)
+    client = Garmin("", "")
+    if "di_token" in data:
+        client.client.loads(garmin_token)
+    elif "jwt_web" in data:
+        client.client.jwt_web = data["jwt_web"]
+    else:
+        raise ValueError(f"Unrecognised token format: {list(data.keys())}")
+    if not client.client.is_authenticated:
+        raise ValueError("Client not authenticated after token restore")
+    return client
+
+
 def _run_browser_login() -> str:
-    """Open a real browser for login; capture the OAuth token via response interception."""
+    """Open a real browser for login; capture the session token."""
     from playwright.sync_api import sync_playwright
 
-    captured: dict = {}
+    # DI token from diauth.garmin.com — preferred format for the garminconnect client.
+    di_captured: dict = {}
 
     with sync_playwright() as p:
         launch_kwargs: dict = {
             "headless": False,
-            # Disable the flag that tells sites this is an automated browser
             "args": ["--disable-blink-features=AutomationControlled"],
         }
-        # Prefer the user's real system Chrome — its fingerprint passes Cloudflare naturally.
-        # Fall back to Playwright's Chromium if Chrome is not installed.
         try:
             browser = p.chromium.launch(channel="chrome", **launch_kwargs)
             log.info("Using system Chrome")
@@ -70,23 +95,25 @@ def _run_browser_login() -> str:
             browser = p.chromium.launch(**launch_kwargs)
             log.info("System Chrome not found — using Playwright Chromium")
 
-        context = browser.new_context(
-            viewport={"width": 1280, "height": 800},
-        )
-        # Remove the navigator.webdriver property that Cloudflare uses to detect automation
+        context = browser.new_context(viewport={"width": 1280, "height": 800})
         context.add_init_script(
             "Object.defineProperty(navigator, 'webdriver', { get: () => undefined });"
         )
         page = context.new_page()
 
         def on_response(response):
-            if captured or response.status != 200:
+            # Only intercept responses from Garmin's DI auth service.
+            # The Garmin Connect web app also calls HERE Maps and other services
+            # that return OAuth-style access_token fields — we must ignore those.
+            if di_captured or response.status != 200:
+                return
+            if "diauth.garmin.com" not in response.url:
                 return
             try:
                 data = response.json()
                 if isinstance(data, dict) and "access_token" in data:
-                    captured.update(data)
-                    log.info("OAuth token captured from response: %s", response.url)
+                    di_captured.update(data)
+                    log.info("DI token captured from: %s", response.url)
             except Exception:
                 pass
 
@@ -102,7 +129,7 @@ def _run_browser_login() -> str:
                     login_detected = True
                     break
             except Exception:
-                break  # browser was closed by the user
+                break
             page.wait_for_timeout(500)
 
         if not login_detected:
@@ -112,59 +139,42 @@ def _run_browser_login() -> str:
                 pass
             raise TimeoutError("Browser closed or login timed out")
 
-        # Let any pending token responses arrive
+        # Let any in-flight token responses land.
         page.wait_for_timeout(2000)
 
-        # Fallback: check browser localStorage / sessionStorage for a token
-        if not captured:
-            log.info("No token in network responses — checking browser storage")
-            stored = page.evaluate("""
-                () => {
-                    const stores = [localStorage, sessionStorage];
-                    for (const store of stores) {
-                        for (let i = 0; i < store.length; i++) {
-                            try {
-                                const val = JSON.parse(store.getItem(store.key(i)));
-                                if (val && val.access_token) return val;
-                            } catch {}
-                        }
-                    }
-                    return null;
-                }
-            """)
-            if isinstance(stored, dict) and "access_token" in stored:
-                captured.update(stored)
-                log.info("OAuth token found in browser storage")
+        if di_captured:
+            session_blob = json.dumps({
+                "di_token": di_captured["access_token"],
+                "di_refresh_token": di_captured.get("refresh_token") or None,
+                "di_client_id": None,
+            })
+            log.info("Session stored as DI token")
+        else:
+            # The web login flow uses JWT_WEB cookie auth rather than DI tokens.
+            log.info("No DI token in network responses — falling back to JWT_WEB cookie")
+            cookies = context.cookies()
+            jwt_web = next(
+                (c["value"] for c in cookies if c["name"] == "JWT_WEB"),
+                None,
+            )
+            if not jwt_web:
+                browser.close()
+                raise ValueError(
+                    "Logged in successfully but could not capture a DI token or "
+                    "JWT_WEB cookie. Try again."
+                )
+            session_blob = json.dumps({"jwt_web": jwt_web})
+            log.info("Session stored as JWT_WEB cookie")
 
         browser.close()
 
-    if not captured:
-        raise ValueError(
-            "Logged in successfully but could not capture an OAuth token from "
-            "network responses or browser storage. Try again."
-        )
-
-    now = time.time()
-    session_blob = json.dumps({
-        "oauth2_token": {
-            "access_token": captured["access_token"],
-            "refresh_token": captured.get("refresh_token", ""),
-            "token_type": captured.get("token_type", "Bearer"),
-            "expires_in": captured.get("expires_in", 3600),
-            "expires_at": now + captured.get("expires_in", 3600),
-            "scope": captured.get("scope", ""),
-            "jti": captured.get("jti", ""),
-        },
-        "domain": "garmin.com",
-    })
     return session_blob
 
 
 @router.post("/validate-token", response_model=ValidateTokenResponse)
 def validate_token(body: ValidateTokenRequest) -> ValidateTokenResponse:
     try:
-        client = Garmin("", "")
-        client.client.loads(body.garminToken)
+        client = _restore_session(body.garminToken)
         client.get_user_profile()
         return ValidateTokenResponse(valid=True)
     except Exception:
@@ -193,10 +203,9 @@ async def browser_login() -> BrowserLoginResponse:
 @router.post("/push", response_model=PushResponse)
 def push(body: PushRequest) -> PushResponse:
     try:
-        client = Garmin("", "")
-        client.client.loads(body.garminToken)
+        client = _restore_session(body.garminToken)
     except Exception as exc:
-        log.warning("Garmin token load failed: %s", type(exc).__name__)
+        log.warning("Garmin session restore failed: %s", exc)
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED, detail="Garmin session is no longer valid"
         ) from exc
