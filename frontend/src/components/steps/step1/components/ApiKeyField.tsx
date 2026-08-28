@@ -14,16 +14,16 @@ export function ApiKeyField({ value, dispatch, onSubmit }: Props) {
 
   return (
     <div>
-      <label htmlFor="hevy-key" className="block text-sm font-medium text-gray-700">
+      <label htmlFor="hevy-key" className="block text-sm font-medium text-fg-muted">
         Hevy API key
       </label>
-      <p className="mt-0.5 text-xs text-gray-500">
+      <p className="mt-0.5 text-xs text-fg-subtle">
         Requires{' '}
         <a
           href="https://www.hevy.com/settings?developer"
           target="_blank"
           rel="noreferrer"
-          className="text-blue-600 underline"
+          className="text-accent-text underline"
         >
           Hevy Pro
         </a>
@@ -38,23 +38,23 @@ export function ApiKeyField({ value, dispatch, onSubmit }: Props) {
           value={value}
           onChange={(e) => dispatch({ type: ActionTypeEnum.HevyKeyChanged, key: e.target.value })}
           onKeyDown={(e) => e.key === 'Enter' && onSubmit()}
-          className="block w-full rounded-md border border-gray-300 px-3 py-2 pr-10 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="block w-full rounded-md border border-border-strong bg-surface px-3 py-2 pr-10 text-sm text-fg shadow-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
         />
         <button
           type="button"
           onClick={() => setShowKey((v) => !v)}
-          className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600"
+          className="absolute inset-y-0 right-0 flex items-center px-3 text-fg-subtle hover:text-fg"
           aria-label={showKey ? 'Hide API key' : 'Show API key'}
         >
           {showKey ? <EyeOffIcon /> : <EyeIcon />}
         </button>
       </div>
       {value && (
-        <p className="mt-1 text-xs text-gray-400">
+        <p className="mt-1 text-xs text-fg-subtle">
           Saved on this device.{' '}
           <button
             type="button"
-            className="underline hover:text-gray-600"
+            className="underline hover:text-fg"
             onClick={() => dispatch({ type: ActionTypeEnum.HevyKeyChanged, key: '' })}
           >
             Forget

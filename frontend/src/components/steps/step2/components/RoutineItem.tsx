@@ -18,23 +18,23 @@ export function RoutineItem({ routine, selected, expanded, onToggleExpand, dispa
           id={`routine-${routine.id}`}
           checked={selected}
           onChange={() => dispatch({ type: ActionTypeEnum.RoutineToggled, id: routine.id })}
-          className="rounded border-gray-300 text-blue-600"
+          className="rounded border-border-strong accent-accent"
         />
         <label
           htmlFor={`routine-${routine.id}`}
-          className="flex-1 cursor-pointer text-sm font-medium text-gray-900"
+          className="flex-1 cursor-pointer text-sm font-medium text-fg"
         >
           {routine.title}
         </label>
-        <span className="text-xs text-gray-400">
+        <span className="text-xs text-fg-subtle">
           {routine.exercises.length} exercise{routine.exercises.length !== 1 ? 's' : ''}
         </span>
-        <button onClick={onToggleExpand} className="text-xs text-gray-400 hover:text-gray-700">
+        <button onClick={onToggleExpand} className="text-xs text-fg-subtle hover:text-fg">
           {expanded ? 'Hide' : 'Preview'}
         </button>
       </div>
       {expanded && (
-        <ul className="mt-2 ml-7 space-y-0.5 text-xs text-gray-500">
+        <ul className="mt-2 ml-7 space-y-0.5 text-xs text-fg-subtle">
           {routine.exercises.map((ex, i) => (
             <li key={i}>{ex.title}</li>
           ))}

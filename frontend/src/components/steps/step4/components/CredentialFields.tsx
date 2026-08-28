@@ -21,7 +21,7 @@ export function CredentialFields({ email, password, dispatch, copied, onCopy }: 
   return (
     <div className="space-y-3">
       <div>
-        <label htmlFor="garmin-email" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="garmin-email" className="block text-sm font-medium text-fg-muted">
           Email
         </label>
         <div className="relative mt-1 flex">
@@ -31,7 +31,7 @@ export function CredentialFields({ email, password, dispatch, copied, onCopy }: 
             autoComplete="username"
             value={email}
             onChange={(e) => dispatch({ type: ActionTypeEnum.GarminEmailChanged, email: e.target.value })}
-            className="block w-full rounded-l-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="block w-full rounded-l-md border border-border-strong bg-surface px-3 py-2 text-sm text-fg shadow-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
             placeholder="your@email.com"
           />
           <CopyButton
@@ -44,7 +44,7 @@ export function CredentialFields({ email, password, dispatch, copied, onCopy }: 
       </div>
 
       <div>
-        <label htmlFor="garmin-password" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="garmin-password" className="block text-sm font-medium text-fg-muted">
           Password
         </label>
         <div className="relative mt-1 flex">
@@ -57,13 +57,13 @@ export function CredentialFields({ email, password, dispatch, copied, onCopy }: 
               onChange={(e) =>
                 dispatch({ type: ActionTypeEnum.GarminPasswordChanged, password: e.target.value })
               }
-              className="block w-full rounded-l-md border border-gray-300 px-3 py-2 pr-10 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="block w-full rounded-l-md border border-border-strong bg-surface px-3 py-2 pr-10 text-sm text-fg shadow-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
               placeholder="••••••••"
             />
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600"
+              className="absolute inset-y-0 right-0 flex items-center px-3 text-fg-subtle hover:text-fg"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOffIcon /> : <EyeIcon />}
@@ -95,7 +95,7 @@ function CopyButton({ label, active, disabled, onClick }: CopyButtonProps) {
       onClick={onClick}
       disabled={disabled}
       title={`Copy ${label}`}
-      className="flex items-center gap-1 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 px-3 py-2 text-xs text-gray-500 hover:bg-gray-100 disabled:opacity-40"
+      className="flex items-center gap-1 rounded-r-md border border-l-0 border-border-strong bg-surface-muted px-3 py-2 text-xs text-fg-subtle hover:bg-border disabled:opacity-40"
     >
       {active ? <CheckIcon /> : <CopyIcon />}
       {active ? 'Copied' : 'Copy'}

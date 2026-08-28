@@ -7,7 +7,7 @@ export default function App() {
   const { state, dispatch, next, back } = useWizard()
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-100">
+    <div className="flex min-h-screen flex-col bg-canvas">
       <Header step={state.step} />
 
       <main className="mx-auto max-w-3xl px-6 py-8">

@@ -78,11 +78,11 @@ export function MappingModal({ target, current, suggestions, suggestionsLoading,
 
   return (
     <Modal open={target !== null} onClose={onClose} title="Change Garmin exercise">
-      <div className="border-b border-gray-100 px-5 py-3">
+      <div className="border-b border-border px-5 py-3">
         <div className="flex items-center gap-2 text-sm">
-          <span className="min-w-0 flex-1 truncate font-medium text-gray-900">{snap.hevyName}</span>
-          <span className="shrink-0 text-gray-400">→</span>
-          <span className="min-w-0 flex-1 truncate text-right text-gray-600">
+          <span className="min-w-0 flex-1 truncate font-medium text-fg">{snap.hevyName}</span>
+          <span className="shrink-0 text-fg-subtle">→</span>
+          <span className="min-w-0 flex-1 truncate text-right text-fg-muted">
             {snap.current ? snap.current.garminDisplayName : '—'}
           </span>
         </div>
@@ -95,10 +95,10 @@ export function MappingModal({ target, current, suggestions, suggestionsLoading,
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search Garmin's exercise catalog…"
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="w-full rounded-md border border-border-strong bg-surface px-3 py-2 text-sm text-fg focus:outline-none focus:ring-1 focus:ring-accent"
         />
-        {searchError && <p className="mt-1 text-xs text-red-600">{searchError}</p>}
-        <p className="mt-2 text-xs font-medium text-gray-400">
+        {searchError && <p className="mt-1 text-xs text-danger">{searchError}</p>}
+        <p className="mt-2 text-xs font-medium text-fg-subtle">
           {showingSearch
             ? 'Search results'
             : snap.suggestionsLoading
@@ -107,14 +107,14 @@ export function MappingModal({ target, current, suggestions, suggestionsLoading,
         </p>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto border-t border-gray-100">
-        {searching && <div className="px-5 py-3 text-xs text-gray-400">Searching…</div>}
+      <div className="min-h-0 flex-1 overflow-y-auto border-t border-border">
+        {searching && <div className="px-5 py-3 text-xs text-fg-subtle">Searching…</div>}
         {!searching && list.length === 0 && (
-          <div className="px-5 py-3 text-xs text-gray-400">
+          <div className="px-5 py-3 text-xs text-fg-subtle">
             {showingSearch ? 'No matches' : 'No suggestions'}
           </div>
         )}
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-border">
           {list.map((c) => {
             const selected =
               snap.current?.garminExercise === c.exercise && snap.current?.garminCategory === c.category
@@ -122,13 +122,13 @@ export function MappingModal({ target, current, suggestions, suggestionsLoading,
               <button
                 key={`${c.category}/${c.exercise}/${c.name}`}
                 onClick={() => onPick(candidateToMapping(snap.hevyName, c, MappingSourceEnum.Manual))}
-                className={`flex w-full items-center gap-2 px-5 py-2.5 text-left text-sm hover:bg-blue-50 ${selected ? 'bg-blue-50' : ''}`}
+                className={`flex w-full items-center gap-2 px-5 py-2.5 text-left text-sm hover:bg-accent-muted ${selected ? 'bg-accent-muted' : ''}`}
               >
-                <span className="min-w-0 flex-1 truncate text-gray-700">{c.name}</span>
-                <span className="shrink-0 rounded bg-gray-100 px-1.5 py-0.5 font-mono text-xs text-gray-500">
+                <span className="min-w-0 flex-1 truncate text-fg-muted">{c.name}</span>
+                <span className="shrink-0 rounded bg-surface-muted px-1.5 py-0.5 font-mono text-xs text-fg-subtle">
                   {c.category}
                 </span>
-                {selected && <CheckIcon className="h-3.5 w-3.5 shrink-0 text-green-600" />}
+                {selected && <CheckIcon className="h-3.5 w-3.5 shrink-0 text-success" />}
               </button>
             )
           })}

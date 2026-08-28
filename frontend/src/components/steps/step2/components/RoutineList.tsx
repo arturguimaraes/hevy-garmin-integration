@@ -15,19 +15,19 @@ export function RoutineList({ routines, selectedIds, dispatch }: Props) {
 
   return (
     <div className="space-y-2">
-      <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-700">
+      <label className="flex cursor-pointer items-center gap-2 text-sm text-fg-muted">
         <input
           type="checkbox"
           checked={allSelected}
           onChange={(e) =>
             dispatch({ type: ActionTypeEnum.AllRoutinesToggled, selected: e.target.checked })
           }
-          className="rounded border-gray-300 text-blue-600"
+          className="rounded border-border-strong accent-accent"
         />
         Select all ({routines.length})
       </label>
 
-      <div className="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-white">
+      <div className="divide-y divide-border rounded-lg border border-border bg-surface">
         {routines.map((routine) => (
           <RoutineItem
             key={routine.id}
