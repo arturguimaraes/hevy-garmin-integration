@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { ActionTypeEnum } from '../state/enums'
-import type { WizardActionType, WizardStateType } from '../state/types'
-import { hevy } from '../api/client'
+import { ActionTypeEnum } from '../../state/enums'
+import type { WizardActionType, WizardStateType } from '../../state/types'
+import { hevy } from '../../api/client'
 
 interface Props {
   state: WizardStateType

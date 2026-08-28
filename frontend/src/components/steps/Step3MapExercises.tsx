@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { ActionTypeEnum, MappingSourceEnum } from '../state/enums'
-import type { ExerciseMappingType, WizardActionType, WizardStateType } from '../state/types'
-import { mapping } from '../api/client'
+import { ActionTypeEnum, MappingSourceEnum } from '../../state/enums'
+import type { ExerciseMappingType, WizardActionType, WizardStateType } from '../../state/types'
+import { mapping } from '../../api/client'
 
 interface Props {
   state: WizardStateType
