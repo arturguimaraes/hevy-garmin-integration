@@ -29,9 +29,6 @@ export function useWizard(): WizardControls {
 
   const dispatch = useCallback((action: WizardActionType) => {
     switch (action.type) {
-      case ActionTypeEnum.HevyKeyChanged:
-        saveCred('hevyApiKey', action.key)
-        break
       case ActionTypeEnum.GarminEmailChanged:
         saveCred('garminEmail', action.email)
         break

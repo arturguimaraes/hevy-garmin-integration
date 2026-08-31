@@ -31,15 +31,39 @@ cd hevy-garmin-integration
 
 ---
 
-## The wizard
+## Getting started
+
+The first time you open the app, **connect Hevy** once — paste your API key from
+[hevy.com/settings?developer](https://www.hevy.com/settings?developer) *(Pro required)*. The key
+is saved locally, so from then on you land straight on the **home menu**, where you pick a task:
+
+- **Sync to Garmin** — the routine-sync wizard (below)
+- **Export to CSV** — download your Hevy data as CSV (below)
+
+---
+
+## Sync to Garmin
 
 | Step | What happens |
 |------|-------------|
-| 1. Connect Hevy | Paste your API key from [hevy.com/settings?developer](https://www.hevy.com/settings?developer) *(Pro required)* |
-| 2. Choose routines | Pick which routines to sync |
-| 3. Map exercises | Review the automatic Garmin matches; click any exercise to pick a different Garmin exercise from the suggestions or by searching the catalog |
-| 4. Connect Garmin | A browser window opens; log in to Garmin Connect there. Your credentials go directly to Garmin — this app never sees them. Session token is saved locally so you only log in once. |
-| 5. Review & push | Upload all workouts to Garmin Connect |
+| 1. Choose routines | Pick which routines to sync |
+| 2. Map exercises | Review the automatic Garmin matches; click any exercise to pick a different Garmin exercise from the suggestions or by searching the catalog |
+| 3. Connect Garmin | A browser window opens; log in to Garmin Connect there. Your credentials go directly to Garmin — this app never sees them. Session token is saved locally so you only log in once. |
+| 4. Review & push | Upload all workouts to Garmin Connect |
+
+---
+
+## Export to CSV
+
+Download your Hevy data as CSV, ready to drop into a spreadsheet or a Claude project.
+
+- Tick **Workout history**, **Routines**, or both.
+- For history, choose a range: all time / last 3 / 6 / 12 months.
+- You get `hevy-workout-history-YYYY-MM-DD.csv` and/or `hevy-routines-YYYY-MM-DD.csv`.
+
+Each file has **one row per set** (every set type kept — normal, warmup, dropset, failure), ISO 8601
+dates, units in the column names (`weight_kg`, `duration_seconds`, …), and a precomputed
+`volume_kg` (`weight_kg × reps`) column.
 
 ---
 

@@ -1,15 +1,15 @@
 import { useState } from 'react'
-import { ActionTypeEnum } from '@/state'
-import type { WizardActionType } from '@/state'
 import { EyeIcon, EyeOffIcon } from '@/components/ui'
 
 interface Props {
   value: string
-  dispatch: React.Dispatch<WizardActionType>
+  onChange: (value: string) => void
   onSubmit: () => void
+  /** Shown as a "Forget" link once a key is saved. Omit to hide it. */
+  onForget?: () => void
 }
 
-export function ApiKeyField({ value, dispatch, onSubmit }: Props) {
+export function ApiKeyField({ value, onChange, onSubmit, onForget }: Props) {
   const [showKey, setShowKey] = useState(false)
 
   return (
@@ -36,7 +36,7 @@ export function ApiKeyField({ value, dispatch, onSubmit }: Props) {
           autoComplete="off"
           placeholder="hevy_api_key_…"
           value={value}
-          onChange={(e) => dispatch({ type: ActionTypeEnum.HevyKeyChanged, key: e.target.value })}
+          onChange={(e) => onChange(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && onSubmit()}
           className="block w-full rounded-md border border-border-strong bg-surface px-3 py-2 pr-10 text-sm text-fg shadow-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
         />
@@ -49,14 +49,10 @@ export function ApiKeyField({ value, dispatch, onSubmit }: Props) {
           {showKey ? <EyeOffIcon /> : <EyeIcon />}
         </button>
       </div>
-      {value && (
+      {value && onForget && (
         <p className="mt-1 text-xs text-fg-subtle">
           Saved on this device.{' '}
-          <button
-            type="button"
-            className="underline hover:text-fg"
-            onClick={() => dispatch({ type: ActionTypeEnum.HevyKeyChanged, key: '' })}
-          >
+          <button type="button" className="underline hover:text-fg" onClick={onForget}>
             Forget
           </button>
         </p>

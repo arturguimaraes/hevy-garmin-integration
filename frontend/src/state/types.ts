@@ -52,10 +52,7 @@ export interface PushResultType {
 // ── Wizard state ──────────────────────────────────────────────────────────────
 
 export interface WizardStateType {
-  step: 1 | 2 | 3 | 4 | 5;
-
-  hevyApiKey: string;
-  hevyUsername: string | null;
+  step: 1 | 2 | 3 | 4;
 
   routines: HevyRoutineType[];
   selectedRoutineIds: string[];
@@ -73,8 +70,6 @@ export interface WizardStateType {
 // ── Wizard actions ─────────────────────────────────────────────────────────────
 
 export type WizardActionType =
-  | { type: ActionTypeEnum.HevyKeyChanged; key: string }
-  | { type: ActionTypeEnum.HevyValidated; username: string | null }
   | { type: ActionTypeEnum.RoutinesLoaded; routines: HevyRoutineType[] }
   | { type: ActionTypeEnum.RoutineToggled; id: string }
   | { type: ActionTypeEnum.AllRoutinesToggled; selected: boolean }

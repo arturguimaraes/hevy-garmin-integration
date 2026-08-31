@@ -1,6 +1,4 @@
 export enum ActionTypeEnum {
-  HevyKeyChanged = 'HEVY_KEY_CHANGED',
-  HevyValidated = 'HEVY_VALIDATED',
   RoutinesLoaded = 'ROUTINES_LOADED',
   RoutineToggled = 'ROUTINE_TOGGLED',
   AllRoutinesToggled = 'ALL_ROUTINES_TOGGLED',

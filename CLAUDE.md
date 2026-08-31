@@ -21,10 +21,10 @@ This app integrates with two external services. Keep these descriptions accurate
 
 ### Hevy
 
-- **What**: Fetches the user's strength routines via the Hevy REST API.
-- **Auth**: API key passed in the `X-Hevy-Key` header. Stored in `localStorage` under `hg:hevyApiKey`. Validated in Step 1.
-- **Key endpoints**: `POST /api/hevy/validate` (check key + fetch username), `GET /api/hevy/routines` (list all routines with exercises and sets).
-- **Library**: Raw `httpx` requests in `backend/app/routes/hevy.py`.
+- **What**: Fetches the user's strength routines and logged workout history via the Hevy REST API.
+- **Auth**: API key passed in the `X-Hevy-Key` header. Stored in `localStorage` under `hg:hevyApiKey`. Owned by the `frontend/src/components/hevy/` feature; validated on the shared connect screen (shown before the home menu), used by both the Garmin-sync wizard and the CSV export.
+- **Key endpoints**: `POST /api/hevy/validate` (check key), `GET /api/hevy/routines` (list all routines with exercises and sets), `GET /api/export/workouts.csv` (logged workout history as CSV, one row per set, optional `since` ISO 8601 query param), `GET /api/export/routines.csv` (routines as CSV, one row per set).
+- **Library**: Raw `httpx` requests in `backend/app/routes/hevy.py` and `backend/app/routes/export.py`.
 
 ### Garmin Connect
 
@@ -47,7 +47,10 @@ Always prefer isolation and modularization. When adding a feature, keep its logi
 - Cross-feature imports go through the barrel only, using the `@/` alias.
 - Split a file into a feature folder before it grows unwieldy, not after.
 
-Example: the theme/appearance feature lives entirely in `frontend/src/components/config/` (`ThemeProvider`, `theme.ts`, `ConfigMenu`, `ConfigModal`, `ThemeControl`); `main.tsx` and `Header.tsx` each touch it in one line.
+Examples:
+- The theme/appearance feature lives entirely in `frontend/src/components/config/` (`ThemeProvider`, `theme.ts`, `ConfigMenu`, `ConfigModal`, `ThemeControl`); `main.tsx` and `Header.tsx` each touch it in one line.
+- The Hevy connection lives entirely in `frontend/src/components/hevy/` (`HevyProvider`/`useHevy`, `hevyStorage.ts`, `HevyGate`, `ConnectHevyScreen`, `ApiKeyField`); `main.tsx` wraps the provider, `App.tsx` mounts `<HevyGate>`, and each consumer reads `useHevy()` in one line.
+- The home-menu / mode selection is `frontend/src/components/home/` (`useAppMode`, `AppModeEnum`, `HomeMenu`); the CSV export is `frontend/src/components/csv-export/` (`CsvExport`, `useCsvExport`, `range.ts`). Both are mounted from `App.tsx` in one line each.
 
 ## Code cleanup
 
