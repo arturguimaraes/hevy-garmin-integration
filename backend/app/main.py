@@ -13,7 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.routes import export, garmin, hevy, mapping
+from app.routes import export, garmin, hevy, intervals, mapping
 
 log = logging.getLogger(__name__)
 
@@ -46,6 +46,7 @@ app.include_router(hevy.router, prefix="/api/hevy")
 app.include_router(garmin.router, prefix="/api/garmin")
 app.include_router(mapping.router, prefix="/api/mapping")
 app.include_router(export.router, prefix="/api/export")
+app.include_router(intervals.router, prefix="/api/intervals")
 
 
 @app.get("/api/health")
