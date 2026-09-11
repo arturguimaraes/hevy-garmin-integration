@@ -15,9 +15,13 @@ Do **not** update the README for:
 - Skeleton/milestone placeholders being filled in (update when the feature ships, not when the skeleton is added)
 - Bug fixes that don't change documented behaviour
 
+## Changelog
+
+Add a dated entry to `CHANGELOG.md` (repo root, newest first) whenever a feature ships — one heading per shipped feature, not per commit. Same shape as the existing entries: `## YYYY-MM-DD — <feature>` followed by a short paragraph.
+
 ## Integration architecture
 
-This app integrates with two external services. Keep these descriptions accurate — update them whenever the integration changes.
+This app integrates with three external services. Keep these descriptions accurate — update them whenever the integration changes.
 
 ### Hevy
 
@@ -33,6 +37,14 @@ This app integrates with two external services. Keep these descriptions accurate
 - **Key endpoints**: `POST /api/garmin/browser-login` (opens browser, blocks until login completes, returns token), `POST /api/garmin/push` (uploads workouts using the stored token — stateless).
 - **Libraries**: `playwright` for the browser login, `garminconnect` + `garth` for workout upload.
 - **Why browser-based**: Garmin's Cloudflare protection blocks all automated HTTP login strategies. A real browser bypasses this entirely.
+
+### Intervals.icu
+
+- **What**: Schedules structured **running** workouts by creating Intervals.icu calendar events. The user's own Intervals.icu → Garmin link (configured on their account, outside this app) then syncs each event to the watch. Independent of the Garmin strength push — different feature, different route.
+- **Auth**: HTTP Basic — username is the literal string `API_KEY`, password is the user's Intervals.icu API key (`httpx: auth=("API_KEY", api_key)`). The API key and Athlete ID are stored in `localStorage` under `hg:intervalsApiKey` / `hg:intervalsAthleteId`, owned by the `frontend/src/components/intervals/` feature. Sent in the request body to the local backend per call; never stored or logged server-side (same pattern as the Hevy key and Garmin token).
+- **Key endpoints**: `POST /api/intervals/preview` (compiles each pasted workout to Workout Builder text, never calls Intervals.icu), `POST /api/intervals/push` (creates one `POST https://intervals.icu/api/v1/athlete/{athleteId}/events` per valid workout — stateless).
+- **Libraries**: Raw `httpx` in `backend/app/routes/intervals.py`; pure compiler in `backend/app/intervals_compiler.py`.
+- **Why plain-text `description`, not `workout_doc`**: Intervals.icu's public API does **not** accept a raw `steps` / `workout_doc` JSON on create — that internal format is deliberately not public, and posting it silently creates an event with no structured steps. The only supported way to get parsed steps is to POST a `description` string in Intervals.icu's own Workout Builder plain-text syntax, which their server parses. The compiler emits that syntax; see its test vectors for the exact format.
 
 Update this section whenever:
 - A new external service is added or removed
@@ -51,6 +63,7 @@ Examples:
 - The theme/appearance feature lives entirely in `frontend/src/components/config/` (`ThemeProvider`, `theme.ts`, `ConfigMenu`, `ConfigModal`, `ThemeControl`); `main.tsx` and `Header.tsx` each touch it in one line.
 - The Hevy connection lives entirely in `frontend/src/components/hevy/` (`HevyProvider`/`useHevy`, `hevyStorage.ts`, `HevyGate`, `ConnectHevyScreen`, `ApiKeyField`); `main.tsx` wraps the provider, `App.tsx` mounts `<HevyGate>`, and each consumer reads `useHevy()` in one line.
 - The home-menu / mode selection is `frontend/src/components/home/` (`useAppMode`, `AppModeEnum`, `HomeMenu`); the CSV export is `frontend/src/components/csv-export/` (`CsvExport`, `useCsvExport`, `range.ts`). Both are mounted from `App.tsx` in one line each.
+- The Intervals.icu push lives entirely in `frontend/src/components/intervals/` (`IntervalsPush`, `useIntervalsPush`, `IntervalsCredentialsForm`, `intervalsStorage.ts`); `App.tsx` mounts `<IntervalsPush>` in one line and `HomeMenu` gets one `onPushIntervals` prop.
 
 ## Code cleanup
 
