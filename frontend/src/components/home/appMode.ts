@@ -3,4 +3,5 @@ export enum AppModeEnum {
   Menu = 'MENU',
   Garmin = 'GARMIN',
   Csv = 'CSV',
+  Intervals = 'INTERVALS',
 }

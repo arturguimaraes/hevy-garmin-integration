@@ -3,6 +3,7 @@ import { useHevy } from '@/components/hevy'
 interface Props {
   onSyncToGarmin: () => void
   onExportCsv: () => void
+  onPushIntervals: () => void
 }
 
 interface TaskCardProps {
@@ -24,7 +25,7 @@ function TaskCard({ title, description, onClick }: TaskCardProps) {
   )
 }
 
-export function HomeMenu({ onSyncToGarmin, onExportCsv }: Props) {
+export function HomeMenu({ onSyncToGarmin, onExportCsv, onPushIntervals }: Props) {
   const { username, forget } = useHevy()
 
   return (
@@ -49,6 +50,11 @@ export function HomeMenu({ onSyncToGarmin, onExportCsv }: Props) {
           title="Export to CSV"
           description="Download your workout history and/or routines as CSV, ready to drop into a Claude project."
           onClick={onExportCsv}
+        />
+        <TaskCard
+          title="Push to Intervals.icu"
+          description="Paste a structured run and sync it straight to your watch."
+          onClick={onPushIntervals}
         />
       </div>
     </div>
