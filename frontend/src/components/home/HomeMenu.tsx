@@ -26,17 +26,14 @@ function TaskCard({ title, description, onClick }: TaskCardProps) {
 }
 
 export function HomeMenu({ onSyncToGarmin, onExportCsv, onPushIntervals }: Props) {
-  const { username, forget } = useHevy()
+  const { username } = useHevy()
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-semibold text-fg">What would you like to do?</h2>
         <p className="mt-1 text-xs text-fg-subtle">
-          Connected to Hevy{username ? ` as ${username}` : ''}.{' '}
-          <button type="button" className="underline hover:text-fg" onClick={forget}>
-            Forget
-          </button>
+          Connected to Hevy{username ? ` as ${username}` : ''}.
         </p>
       </div>
 
