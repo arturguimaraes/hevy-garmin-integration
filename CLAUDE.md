@@ -1,5 +1,12 @@
 # Claude instructions
 
+## Working style
+
+Do not assume anything and start implementing. When a request is ambiguous, or
+when the way to verify a change (spinning up servers, installing browsers,
+downloading dependencies) is heavier than the change itself, ask first instead
+of guessing — this saves tokens and avoids wasted work.
+
 ## README updates
 
 Keep `README.md` up to date whenever any of the following change:
