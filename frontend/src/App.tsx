@@ -2,13 +2,14 @@ import { ActionTypeEnum, useWizard } from '@/state'
 import { HevyGate } from '@/components/hevy'
 import { AppModeEnum, HomeMenu, useAppMode } from '@/components/home'
 import { CsvExport } from '@/components/csv-export'
+import { IntervalsPush } from '@/components/intervals'
 import { Header } from '@/components/layout/Header'
 import { WizardStep } from '@/components/steps/WizardStep'
 import { Footer } from '@/components/layout/Footer'
 
 export default function App() {
   const { state, dispatch, next, back } = useWizard()
-  const { mode, showMenu, showGarmin, showCsv } = useAppMode()
+  const { mode, showMenu, showGarmin, showCsv, showIntervals } = useAppMode()
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
@@ -23,6 +24,7 @@ export default function App() {
                 showGarmin()
               }}
               onExportCsv={showCsv}
+              onPushIntervals={showIntervals}
             />
           )}
           {mode === AppModeEnum.Garmin && (
@@ -35,6 +37,7 @@ export default function App() {
             />
           )}
           {mode === AppModeEnum.Csv && <CsvExport onBack={showMenu} />}
+          {mode === AppModeEnum.Intervals && <IntervalsPush onBack={showMenu} />}
         </HevyGate>
       </main>
 

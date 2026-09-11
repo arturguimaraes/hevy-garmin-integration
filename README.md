@@ -39,6 +39,7 @@ is saved locally, so from then on you land straight on the **home menu**, where 
 
 - **Sync to Garmin** — the routine-sync wizard (below)
 - **Export to CSV** — download your Hevy data as CSV (below)
+- **Push to Intervals.icu** — paste structured running workouts and schedule them on your watch (below)
 
 ---
 
@@ -64,6 +65,27 @@ Download your Hevy data as CSV, ready to drop into a spreadsheet or a Claude pro
 Each file has **one row per set** (every set type kept — normal, warmup, dropset, failure), ISO 8601
 dates, units in the column names (`weight_kg`, `duration_seconds`, …), and a precomputed
 `volume_kg` (`weight_kg × reps`) column.
+
+---
+
+## Push to Intervals.icu
+
+Schedule structured **running** workouts on your watch without touching Garmin's login. This
+path is independent of "Sync to Garmin" — it creates events on
+[Intervals.icu](https://intervals.icu), which then syncs them to your watch through the
+Intervals.icu → Garmin link you set up on your Intervals.icu account.
+
+1. Enter your **Athlete ID** and **API key** once (Intervals.icu → Settings → Developer). They're
+   saved locally, same as the Hevy key, with a "Forget" link.
+2. Paste a **JSON array** of workouts (always an array — wrap a single workout in `[ ]` too).
+3. **Preview** compiles each workout to Intervals.icu's Workout Builder syntax, or shows a
+   per-workout error (e.g. a step whose target doesn't match the workout's `target_type`).
+4. **Push** creates one Intervals.icu calendar event per valid workout. Invalid entries are
+   skipped, not fatal.
+
+Each workout has a `name`, `start_date_local`, `target_type` (`"pace"` or `"hr"`), optional
+`notes`, and `sections` of `steps`; each step has one of `duration` / `distance`, a `target`,
+and optional `cue` / `ramp`.
 
 ---
 
@@ -100,8 +122,9 @@ All sensitive values are stored in your **browser's localStorage** (prefix `hg:`
 
 | What | Stored? | Notes |
 |------|---------|-------|
-| Hevy API key | ✓ localStorage | Cleared with the "Forget" link |
-| Garmin session token | ✓ localStorage | OAuth token captured after browser login. Cleared on "Sign in with a different account". |
+| Hevy API key | ✓ localStorage | `hg:hevyApiKey` — cleared with the "Forget" link |
+| Garmin session token | ✓ localStorage | `hg:garminToken` — OAuth token captured after browser login. Cleared on "Sign in with a different account". |
+| Intervals.icu Athlete ID + API key | ✓ localStorage | `hg:intervalsAthleteId` / `hg:intervalsApiKey` — cleared with the "Forget" link. Sent only to the local backend, which uses them for a single HTTP Basic call to Intervals.icu. |
 | Theme preference | ✓ localStorage | `hg:theme` — not sensitive; UI preference only |
 
 The Garmin session token is a time-limited OAuth token, not your password. It can be revoked by changing your Garmin password.

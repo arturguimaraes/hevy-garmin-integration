@@ -11,9 +11,10 @@ export function useAppMode() {
   const showMenu = useCallback(() => setMode(AppModeEnum.Menu), [])
   const showGarmin = useCallback(() => setMode(AppModeEnum.Garmin), [])
   const showCsv = useCallback(() => setMode(AppModeEnum.Csv), [])
+  const showIntervals = useCallback(() => setMode(AppModeEnum.Intervals), [])
 
   return useMemo(
-    () => ({ mode, showMenu, showGarmin, showCsv }),
-    [mode, showMenu, showGarmin, showCsv],
+    () => ({ mode, showMenu, showGarmin, showCsv, showIntervals }),
+    [mode, showMenu, showGarmin, showCsv, showIntervals],
   )
 }

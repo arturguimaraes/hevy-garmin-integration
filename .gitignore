@@ -33,3 +33,6 @@ npm-debug.log*
 .idea/
 *.swp
 *.swo
+
+# Local scratch docs (feature specs pasted in for Claude Code, not part of the repo)
+documentation/

@@ -117,6 +117,33 @@ export interface WorkoutPayloadType {
   exercises: WorkoutExercisePayloadType[]
 }
 
+// ── Intervals.icu ─────────────────────────────────────────────────────────────
+
+export interface IntervalsItemResultType {
+  index: number
+  name: string | null
+  /** Compiled Workout Builder text — preview only. */
+  description: string | null
+  /** Created Intervals.icu event id — push only. */
+  eventId: string | null
+  errors: string[]
+}
+
+export const intervals = {
+  /** Compile a pasted batch to Workout Builder text. `workouts` is the raw parsed JSON. */
+  preview(workouts: unknown): Promise<{ items: IntervalsItemResultType[] }> {
+    return request('POST', '/intervals/preview', { body: workouts })
+  },
+
+  push(
+    athleteId: string,
+    apiKey: string,
+    workouts: unknown,
+  ): Promise<{ results: IntervalsItemResultType[] }> {
+    return request('POST', '/intervals/push', { body: { athleteId, apiKey, workouts } })
+  },
+}
+
 export const garmin = {
   validateToken(garminToken: string): Promise<{ valid: boolean }> {
     return request('POST', '/garmin/validate-token', { body: { garminToken } })
