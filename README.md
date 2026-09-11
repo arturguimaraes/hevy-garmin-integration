@@ -114,6 +114,8 @@ cd frontend && npm test
 
 The app is **dark by default**. Click the gear icon in the top-right to open Settings and switch between **Dark**, **Light**, and **System** (follows your OS). The choice is saved in `localStorage` under `hg:theme`.
 
+Settings also shows your connected **Hevy API key**, hidden by default with an eye toggle to reveal it, the date it was saved, and a "Forget" link to disconnect.
+
 ---
 
 ## Credential & session storage
@@ -122,7 +124,8 @@ All sensitive values are stored in your **browser's localStorage** (prefix `hg:`
 
 | What | Stored? | Notes |
 |------|---------|-------|
-| Hevy API key | ✓ localStorage | `hg:hevyApiKey` — cleared with the "Forget" link |
+| Hevy API key | ✓ localStorage | `hg:hevyApiKey` — cleared with the "Forget" link. Viewable (hidden by default) in Settings. |
+| Hevy API key saved date | ✓ localStorage | `hg:hevyApiKeySavedAt` — ISO timestamp, display-only, cleared alongside the key |
 | Garmin session token | ✓ localStorage | `hg:garminToken` — OAuth token captured after browser login. Cleared on "Sign in with a different account". |
 | Intervals.icu Athlete ID + API key | ✓ localStorage | `hg:intervalsAthleteId` / `hg:intervalsApiKey` — cleared with the "Forget" link. Sent only to the local backend, which uses them for a single HTTP Basic call to Intervals.icu. |
 | Theme preference | ✓ localStorage | `hg:theme` — not sensitive; UI preference only |
