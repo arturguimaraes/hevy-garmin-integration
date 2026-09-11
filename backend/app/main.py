@@ -59,13 +59,19 @@ if _STATIC.exists():
     if (_STATIC / "assets").exists():
         app.mount("/assets", StaticFiles(directory=_STATIC / "assets"), name="assets")
 
+    # Unhashed files (index.html, favicon.svg, …) must always be revalidated —
+    # otherwise a browser can keep serving a stale index.html (with old asset
+    # hashes) after a rebuild. Content-hashed files under /assets/* don't hit
+    # this route (mounted separately above) and cache fine by default.
+    _NO_CACHE_HEADERS = {"Cache-Control": "no-cache"}
+
     @app.get("/{full_path:path}")
     async def spa(full_path: str) -> FileResponse:
         """Serve static files or fall back to index.html for SPA navigation."""
         target = _STATIC / full_path
         if target.is_file():
-            return FileResponse(target)
-        return FileResponse(_STATIC / "index.html")
+            return FileResponse(target, headers=_NO_CACHE_HEADERS)
+        return FileResponse(_STATIC / "index.html", headers=_NO_CACHE_HEADERS)
 else:
 
     @app.get("/")
