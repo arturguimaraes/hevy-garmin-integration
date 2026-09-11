@@ -1,10 +1,12 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { hevy } from '@/api'
-import { loadHevyKey, saveHevyKey } from './hevyStorage'
+import { loadHevyKey, loadHevyKeySavedAt, saveHevyKey } from './hevyStorage'
 
 export interface HevyConnectionType {
   /** The validated (or persisted) Hevy API key. Empty when disconnected. */
   apiKey: string
+  /** ISO timestamp of when the current key was saved. Null when disconnected. */
+  savedAt: string | null
   /** Hevy username — the backend always returns null today, so treat as optional. */
   username: string | null
   status: 'disconnected' | 'connected'
@@ -21,6 +23,7 @@ export function HevyProvider({ children }: { children: React.ReactNode }) {
   // A persisted key means "connected" optimistically — the backend can't return
   // a username anyway, and re-validating on every load would just add latency.
   const [apiKey, setApiKey] = useState<string>(loadHevyKey)
+  const [savedAt, setSavedAt] = useState<string | null>(loadHevyKeySavedAt)
   const [username, setUsername] = useState<string | null>(null)
   const [status, setStatus] = useState<'disconnected' | 'connected'>(() =>
     loadHevyKey() ? 'connected' : 'disconnected',
@@ -37,6 +40,7 @@ export function HevyProvider({ children }: { children: React.ReactNode }) {
       const res = await hevy.validate(key)
       saveHevyKey(key)
       setApiKey(key)
+      setSavedAt(loadHevyKeySavedAt())
       setUsername(res.username)
       setStatus('connected')
     } catch (err) {
@@ -49,14 +53,15 @@ export function HevyProvider({ children }: { children: React.ReactNode }) {
   const forget = useCallback(() => {
     saveHevyKey('')
     setApiKey('')
+    setSavedAt(null)
     setUsername(null)
     setError(null)
     setStatus('disconnected')
   }, [])
 
   const value = useMemo<HevyConnectionType>(
-    () => ({ apiKey, username, status, validating, error, connect, forget }),
-    [apiKey, username, status, validating, error, connect, forget],
+    () => ({ apiKey, savedAt, username, status, validating, error, connect, forget }),
+    [apiKey, savedAt, username, status, validating, error, connect, forget],
   )
 
   return <HevyContext.Provider value={value}>{children}</HevyContext.Provider>

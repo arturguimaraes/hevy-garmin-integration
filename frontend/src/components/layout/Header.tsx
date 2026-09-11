@@ -1,6 +1,7 @@
 import type { WizardStateType } from '@/state'
 import { AppModeEnum } from '@/components/home'
 import { ConfigMenu } from '@/components/config'
+import { Logo } from '@/components/ui'
 
 const STEP_LABELS = ['Routines', 'Map exercises', 'Connect Garmin', 'Review & push']
 
@@ -17,7 +18,10 @@ export function Header({ mode, wizardStep, onBackToMenu }: Props) {
     <header className="bg-surface border-b border-border">
       <div className="mx-auto max-w-3xl px-6 py-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-fg">Hevy → Garmin Connect</h1>
+          <div className="flex items-center gap-2">
+            <Logo className="h-7 w-7" />
+            <h1 className="text-lg font-semibold text-fg">Hevy → Garmin Connect</h1>
+          </div>
           <div className="flex items-center gap-3">
             {mode !== AppModeEnum.Menu && (
               <button onClick={onBackToMenu} className="text-sm text-fg-muted underline">
