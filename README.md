@@ -127,7 +127,9 @@ All sensitive values are stored in your **browser's localStorage** (prefix `hg:`
 | Hevy API key | ✓ localStorage | `hg:hevyApiKey` — cleared with the "Forget" link. Viewable (hidden by default) in Settings. |
 | Hevy API key saved date | ✓ localStorage | `hg:hevyApiKeySavedAt` — ISO timestamp, display-only, cleared alongside the key |
 | Garmin session token | ✓ localStorage | `hg:garminToken` — OAuth token captured after browser login. Cleared on "Sign in with a different account". |
+| Garmin credentials saved date | ✓ localStorage | `hg:garminSavedAt` — ISO timestamp, bumped whenever the email, password, or token is saved. Display-only. |
 | Intervals.icu Athlete ID + API key | ✓ localStorage | `hg:intervalsAthleteId` / `hg:intervalsApiKey` — cleared with the "Forget" link. Sent only to the local backend, which uses them for a single HTTP Basic call to Intervals.icu. |
+| Intervals.icu saved date | ✓ localStorage | `hg:intervalsSavedAt` — ISO timestamp, display-only, cleared alongside the credentials |
 | Theme preference | ✓ localStorage | `hg:theme` — not sensitive; UI preference only |
 
 The Garmin session token is a time-limited OAuth token, not your password. It can be revoked by changing your Garmin password.

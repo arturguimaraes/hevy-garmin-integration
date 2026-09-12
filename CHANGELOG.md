@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-09-12 — "Saved on this device" dates for Garmin and Intervals.icu
+
+Garmin's "Authenticated with Garmin Connect" notice and the Intervals.icu
+"Connected as..." line now show when the credentials were last saved on this
+device, matching the date already shown for the Hevy API key.
+
 ## 2026-09-11 — App logo
 
 Replaced the blue favicon with a black badge and white barbell mark, now the

@@ -1,12 +1,21 @@
+import { formatSavedAt } from '@/lib/formatDate'
 import { ActionTypeEnum } from '@/state'
 import type { WizardActionType } from '@/state'
 
-export function AuthenticatedNotice({ dispatch }: { dispatch: React.Dispatch<WizardActionType> }) {
+interface Props {
+  dispatch: React.Dispatch<WizardActionType>
+  savedAt: string | null
+}
+
+export function AuthenticatedNotice({ dispatch, savedAt }: Props) {
   return (
     <div className="space-y-2">
       <div className="rounded-lg border border-success-border bg-success-bg px-4 py-3 text-sm text-success">
         ✓ Authenticated with Garmin Connect
       </div>
+      {savedAt && (
+        <p className="text-xs text-fg-subtle">Saved on this device {formatSavedAt(savedAt)}.</p>
+      )}
       <p className="text-xs text-fg-subtle">
         <button
           type="button"

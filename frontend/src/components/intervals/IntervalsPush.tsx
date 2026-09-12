@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import type { IntervalsItemResultType } from '@/api'
+import { formatSavedAt } from '@/lib/formatDate'
 import { IntervalsCredentialsForm } from './IntervalsCredentialsForm'
-import { loadIntervalsCreds, saveIntervalsCreds } from './intervalsStorage'
+import { loadIntervalsCreds, loadIntervalsSavedAt, saveIntervalsCreds } from './intervalsStorage'
 import type { IntervalsCredsType } from './intervalsStorage'
 import { useIntervalsPush } from './useIntervalsPush'
 
@@ -25,6 +26,7 @@ const PLACEHOLDER = `[
 
 export function IntervalsPush({ onBack }: Props) {
   const [creds, setCreds] = useState<IntervalsCredsType>(loadIntervalsCreds)
+  const [savedAt, setSavedAt] = useState<string | null>(loadIntervalsSavedAt)
   const [text, setText] = useState('')
   const { phase, error, items, results, canPush, preview, push } = useIntervalsPush()
 
@@ -33,6 +35,7 @@ export function IntervalsPush({ onBack }: Props) {
   const store = (next: IntervalsCredsType) => {
     saveIntervalsCreds(next)
     setCreds(next)
+    setSavedAt(loadIntervalsSavedAt())
   }
 
   const shown = phase === 'done' ? results : items
@@ -52,6 +55,7 @@ export function IntervalsPush({ onBack }: Props) {
       {connected ? (
         <p className="text-xs text-fg-subtle">
           Connected to Intervals.icu as <code>{creds.athleteId}</code>.{' '}
+          {savedAt && `Saved on this device ${formatSavedAt(savedAt)}. `}
           <button
             type="button"
             className="underline hover:text-fg"

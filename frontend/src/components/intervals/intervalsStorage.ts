@@ -9,6 +9,7 @@
 
 const ATHLETE_ID_KEY = 'hg:intervalsAthleteId'
 const API_KEY_KEY = 'hg:intervalsApiKey'
+const SAVED_AT_KEY = 'hg:intervalsSavedAt'
 
 export interface IntervalsCredsType {
   athleteId: string
@@ -32,7 +33,18 @@ export function saveIntervalsCreds({ athleteId, apiKey }: IntervalsCredsType) {
     else localStorage.removeItem(ATHLETE_ID_KEY)
     if (apiKey) localStorage.setItem(API_KEY_KEY, apiKey)
     else localStorage.removeItem(API_KEY_KEY)
+
+    if (athleteId || apiKey) localStorage.setItem(SAVED_AT_KEY, new Date().toISOString())
+    else localStorage.removeItem(SAVED_AT_KEY)
   } catch {
     // Storage disabled (private mode) — the credentials just won't persist.
+  }
+}
+
+export function loadIntervalsSavedAt(): string | null {
+  try {
+    return localStorage.getItem(SAVED_AT_KEY)
+  } catch {
+    return null
   }
 }
