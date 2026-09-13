@@ -1,13 +1,7 @@
 import { useState } from 'react'
 import { EyeIcon, EyeOffIcon } from '@/components/ui'
+import { formatSavedAt } from '@/lib/formatDate'
 import { useHevy } from './HevyProvider'
-
-function formatSavedAt(iso: string): string {
-  return new Date(iso).toLocaleString(undefined, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  })
-}
 
 /** Settings-panel view of the connected Hevy API key: hidden by default, revealable. */
 export function HevyKeyControl() {

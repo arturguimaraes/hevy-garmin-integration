@@ -1,4 +1,5 @@
 const P = 'hg:'
+const SAVED_AT_KEY = `${P}garminSavedAt`
 
 export interface SavedCredentialsType {
   garminEmail: string
@@ -15,6 +16,14 @@ export function loadSaved(): SavedCredentialsType {
 }
 
 export function saveCred(key: keyof SavedCredentialsType, value: string) {
-  if (value) localStorage.setItem(`${P}${key}`, value)
-  else localStorage.removeItem(`${P}${key}`)
+  if (value) {
+    localStorage.setItem(`${P}${key}`, value)
+    localStorage.setItem(SAVED_AT_KEY, new Date().toISOString())
+  } else {
+    localStorage.removeItem(`${P}${key}`)
+  }
+}
+
+export function loadGarminSavedAt(): string | null {
+  return localStorage.getItem(SAVED_AT_KEY)
 }

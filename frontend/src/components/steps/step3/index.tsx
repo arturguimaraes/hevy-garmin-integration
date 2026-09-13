@@ -1,3 +1,4 @@
+import { loadGarminSavedAt } from '@/state'
 import type { WizardActionType, WizardStateType } from '@/state'
 import { useGarminAuth } from './useGarminAuth'
 import { useClipboard } from './useClipboard'
@@ -32,7 +33,7 @@ export function Step3ConnectGarmin({ state, dispatch, onNext, onBack }: Props) {
           Checking Garmin session…
         </div>
       ) : isAuthenticated ? (
-        <AuthenticatedNotice dispatch={dispatch} />
+        <AuthenticatedNotice dispatch={dispatch} savedAt={loadGarminSavedAt()} />
       ) : (
         <div className="space-y-4">
           <CredentialFields
